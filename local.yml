@@ -28,5 +28,5 @@
     # - include: tasks/brave.yml
     # - include: tasks/dotfiles.yml
     - include: tasks/productivity-tools.yml
-    # - include: tasks/lsp.yml
+    - include: tasks/lsp.yml
 

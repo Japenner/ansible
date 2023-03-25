@@ -1,6 +1,6 @@
 - name: Setup sumneko lua lsp
   ansible.builtin.git:
-    repo: "git@github.com:sumneko/lua-language-server.git"
+    repo: "git@github.com:LuaLS/lua-language-server.git"
     recursive: yes
     dest: "{{ personal }}/sumneko"
   tags:
