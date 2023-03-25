@@ -16,7 +16,7 @@
   tasks:
     - include: tasks/ssh.yml
     - include: tasks/git-setup.yml
-    # - include: tasks/core-setup.yml
+    - include: tasks/core-setup.yml
     # - include: tasks/docker-setup.yml
     # - include: tasks/asdf-setup.yml
     # - include: tasks/npm-packages.yml
@@ -24,9 +24,9 @@
     # - include: tasks/slack-setup.yml
     # - include: tasks/spotify-setup.yml
     # - include: tasks/personal-projects.yml
-    # - include: tasks/nvim-setup.yml
+    - include: tasks/nvim-setup.yml
     # - include: tasks/brave.yml
     # - include: tasks/dotfiles.yml
-    # - include: tasks/productivity-tools.yml
+    - include: tasks/productivity-tools.yml
     # - include: tasks/lsp.yml
 
