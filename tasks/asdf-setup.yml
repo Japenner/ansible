@@ -1,0 +1,19 @@
+- name: Install ASDF dependencies
+  become: true
+  apt:
+    name: ["curl", "git"]
+  tags:
+    - install
+    - asdf
+    - node
+    - ruby
+
+- name: Clone ASDF
+  ansible.builtin.git:
+    repo: 'https://github.com/asdf-vm/asdf.git'
+    dest: "{{ lookup('env', 'HOME') }}/.asdf"
+  tags:
+    - install
+    - asdf
+    - node
+    - ruby
