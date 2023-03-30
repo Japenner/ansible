@@ -26,3 +26,24 @@
     repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
     dest: "~/.oh-my-zsh/plugins/zsh-autosuggestions"
   tags: *tags_for_zsh_tasks
+
+- name: Install zsh-nvm
+  ansible.builtin.git:
+    repo: 'https://github.com/lukechilds/zsh-nvm.git'
+    dest: "~/.oh-my-zsh/plugins/zsh-nvm"
+  tags: *tags_for_zsh_tasks
+
+- name: Install zsh-syntax-highlighting
+  ansible.builtin.git:
+    repo: 'https://github.com/zsh-users/zsh-syntax-highlighting.git'
+    dest: "~/.oh-my-zsh/plugins/zsh-syntax-highlighting"
+  tags: *tags_for_zsh_tasks
+
+# - name: Install starship
+#   ansible.builtin.git:
+#     repo: 'https://github.com/starship/starship.git'
+#     dest: "~/.oh-my-zsh/plugins/zsh-syntax-highlighting"
+#   tags: *tags_for_zsh_tasks
+
+# curl -sS https://starship.rs/install.sh | sh
+

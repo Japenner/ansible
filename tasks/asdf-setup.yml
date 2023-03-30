@@ -17,3 +17,12 @@
     - asdf
     - node
     - ruby
+
+# Add Ruby plugin:
+# asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+
+# install required libs for ruby:
+# sudo apt update && apt install -y libyaml-dev
+
+# Add Nodejs plugin:
+# asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git

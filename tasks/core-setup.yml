@@ -40,21 +40,21 @@
     - install
     - core
 
-- name: Install System Packages 6 (dconf-editor, nvidia-settings, pavucontrol)
-  become: true
-  apt:
-    name: [ "dconf-editor", "nvidia-settings", "pavucontrol" ]
-  tags:
-    - install
-    - core
+# - name: Install System Packages 6 (dconf-editor, nvidia-settings, pavucontrol)
+#   become: true
+#   apt:
+#     name: [ "dconf-editor", "nvidia-settings", "pavucontrol" ]
+#   tags:
+#     - install
+#     - core
 
-- name: Install System Packages 7 (moreutils, clangd, ubuntu-mate-desktop)
-  become: true
-  apt:
-    name: [ "moreutils", "clangd", "ubuntu-mate-desktop" ]
-  tags:
-    - install
-    - core
+# - name: Install System Packages 7 (moreutils, clangd, ubuntu-mate-desktop)
+#   become: true
+#   apt:
+#     name: [ "moreutils", "clangd", "ubuntu-mate-desktop" ]
+#   tags:
+#     - install
+#     - core
 
 - name: Install Clang
   become: true
