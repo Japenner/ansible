@@ -24,10 +24,10 @@
     - install
     - core
 
-- name: Install System Packages 4 (golang, lsof, i3)
+- name: Install System Packages 4 (golang, lsof)
   become: true
   apt:
-    name: [ "golang", "lsof", "i3" ]
+    name: [ "golang", "lsof" ]
   tags:
     - install
     - core
@@ -55,16 +55,3 @@
   tags:
     - install
     - core
-
-- name: dconf i3
-  shell: dconf write /org/mate/desktop/session/required-components/windowmanager "'i3'"
-  tags:
-    - install
-    - core
-
-- name: dconf i3
-  shell: dconf write /org/mate/desktop/background/show-desktop-icons "false"
-  tags:
-    - install
-    - core
-
