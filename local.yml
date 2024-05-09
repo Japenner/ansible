@@ -4,6 +4,7 @@
     dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
     personal: "{{ lookup('env', 'HOME') }}/repos/personal"
     user: "jacob"
+    github_account: "Japenner"
   pre_tasks:
   - name: Update Apt
     become: true
@@ -45,9 +46,9 @@
     - name:
       include_tasks:
         file: tasks/nvim-setup.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/brave.yml
+    - name:
+      include_tasks:
+        file: tasks/brave.yml
     - name:
       include_tasks:
         file: tasks/dotfiles.yml

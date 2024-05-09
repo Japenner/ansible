@@ -2,27 +2,18 @@
   become: true
   apt:
     name: stow
-  tags:
-    - install
-    - dotfiles
-    - stow
+  tags: &dotfiles_setup_tags [ 'install', 'dotfiles', 'stow' ]
 
 - name: Cloning .dotfiles
   ansible.builtin.git:
-    repo: 'git@github.com:Japenner/.dotfiles.git'
+    repo: "git@github.com:{{ github_account }}/.dotfiles.git"
     dest: "{{ lookup('env', 'HOME') }}/.dotfiles"
     recursive: yes
     update: yes
     accept_hostkey: yes
     version: master
-  tags:
-    - install
-    - dotfiles
-    - stow
+  tags: *dotfiles_setup_tags
 
 - name: Stow dotfiles
   shell: cd $HOME/.dotfiles && ./ubuntu
-  tags:
-    - install
-    - dotfiles
-    - stow
+  tags: *dotfiles_setup_tags
