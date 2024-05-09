@@ -1,32 +1,57 @@
-- name: Clone or update personal projects
-  become: true
-  vars:
-    personal_projects:
-      - name: jp_com
-        repo: "git@github.com:{{ github_account }}/jp_com.git"
-      - name: obsidian 
-        repo: "git@github.com:{{ github_account }}/obsidian.git"
-      - name: docker 
-        repo: "git@github.com:{{ github_account }}/homelab.git"
+- name: jp_com exists
+  stat:
+    path: "{{ personal }}/jp_com"
+  register: jp_com
   tags: &tags_for_project_tasks [ 'dotfiles', 'install', 'personal-project' ]
 
-- name: Check if project {{ item.name }} exists
-  stat:
-    path: "{{ personal }}/{{ item.name }}"
-  register: project_exists
-  loop: "{{ personal_projects }}"
-  tags: *tags_for_project_tasks
-
-- name: Clone or update project {{ item.name }}
+- name: Personal Project jp_com
   ansible.builtin.git:
-    repo: "{{ item.repo }}"
-    dest: "{{ personal }}/{{ item.name }}"
-  when: project_exists.stat.exists == False
-  loop: "{{ personal_projects }}"
+    repo: "git@github.com:{{ github_account }}/jp_com.git"
+    bare: true
+    dest: "{{ personal }}/jp_com"
+  tags: *tags_for_project_tasks
+  when: jp_com.stat.exists == False
+
+- name: jp_com Master Checkout
+  shell: "cd {{ personal }}/jp_com && git fetch && git worktree add master master"
+  tags: *tags_for_project_tasks
+  when: jp_com.stat.exists == False
+
+- name: obsidian exists
+  stat:
+    path: "{{ personal }}/obsidian"
+  register: obsidian
   tags: *tags_for_project_tasks
 
-- name: Checkout master branch for project {{ item.name }}
-  shell: "cd {{ personal }}/{{ item.name }} && git fetch && git worktree add master master"
-  when: project_exists.stat.exists == False
-  loop: "{{ personal_projects }}"
+- name: Personal Project obsidian
+  ansible.builtin.git:
+    repo: "git@github.com:{{ github_account }}/obsidian.git"
+    bare: true
+    dest: "{{ personal }}/obsidian"
   tags: *tags_for_project_tasks
+  when: obsidian.stat.exists == False
+
+- name: obsidian Master Checkout
+  shell: "cd {{ personal }}/obsidian && git fetch && git worktree add master master"
+  tags: *tags_for_project_tasks
+  when: obsidian.stat.exists == False
+
+- name: homelab exists
+  stat:
+    path: "{{ personal }}/docker"
+  register: homelab
+  tags: *tags_for_project_tasks
+
+- name: Personal Project homelab
+  ansible.builtin.git:
+    repo: "git@github.com:{{ github_account }}/homelab.git"
+    bare: true
+    dest: "{{ personal }}/docker"
+  tags: *tags_for_project_tasks
+  when: homelab.stat.exists == False
+
+- name: homelab Master Checkout
+  shell: "cd {{ personal }}/docker && git fetch && git worktree add master master"
+  tags: *tags_for_project_tasks
+  when: homelab.stat.exists == False
+
