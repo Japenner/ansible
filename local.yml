@@ -27,9 +27,9 @@
     - name:
       include_tasks:
         file: tasks/docker-setup.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/asdf-setup.yml
+    - name:
+      include_tasks:
+        file: tasks/asdf-setup.yml
     # - name:
     #   include_tasks:
     #     file: tasks/npm-packages.yml
