@@ -2,24 +2,18 @@
   get_url:
     url: https://downloads.slack-edge.com/linux_releases/slack-desktop-4.19.2-amd64.deb
     dest: /tmp/slack.deb
-  tags:
-    - install
-    - slack
+  tags: &tags_for_slack_tasks [ 'install', 'slack', 'desktop' ]
 
 - name: Remove Any previous slacks
   become: true
   apt:
     name: slack-desktop
     state: absent
-  tags:
-    - install
-    - slack
+  tags: *tags_for_slack_tasks
 
 - name: Install Slack .deb package
   become: true
   apt:
     deb: /tmp/slack.deb
-  tags:
-    - install
-    - slack
+  tags: *tags_for_slack_tasks
 

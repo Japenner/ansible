@@ -2,7 +2,7 @@
   vars:
     source_key: "./.ssh/id_ed25519"
     dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
-    personal: "{{ lookup('env', 'HOME') }}/personal"
+    personal: "{{ lookup('env', 'HOME') }}/repos/personal"
     user: "jacob"
   pre_tasks:
   - name: Update Apt
@@ -39,12 +39,9 @@
     # - name:
     #   include_tasks:
     #     file: tasks/slack-setup.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/spotify-setup.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/personal-projects.yml
+    - name:
+      include_tasks:
+        file: tasks/personal-projects.yml
     # - name:
     #   include_tasks:
     #     file: tasks/nvim-setup.yml
