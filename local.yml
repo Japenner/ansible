@@ -31,9 +31,9 @@
     - name:
       include_tasks:
         file: tasks/asdf-setup.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/npm-packages.yml
+    - name:
+      include_tasks:
+        file: tasks/npm-packages.yml
     - name:
       include_tasks:
         file: tasks/zsh-setup.yml
@@ -48,14 +48,11 @@
         file: tasks/nvim-setup.yml
     - name:
       include_tasks:
-        file: tasks/brave.yml
+        file: tasks/brave-setup.yml
     - name:
       include_tasks:
         file: tasks/dotfiles.yml
     - name:
       include_tasks:
         file: tasks/productivity-tools.yml
-    - name:
-      include_tasks:
-        file: tasks/lsp.yml
 
