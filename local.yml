@@ -3,6 +3,7 @@
     source_key: "./.ssh/id_ed25519"
     dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
     personal: "{{ lookup('env', 'HOME') }}/personal"
+    user: "jacob"
   pre_tasks:
   - name: Update Apt
     become: true
@@ -23,9 +24,9 @@
     - name:
       include_tasks:
         file: tasks/core-setup.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/docker-setup.yml
+    - name:
+      include_tasks:
+        file: tasks/docker-setup.yml
     # - name:
     #   include_tasks:
     #     file: tasks/asdf-setup.yml
