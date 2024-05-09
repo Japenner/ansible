@@ -42,9 +42,9 @@
     - name:
       include_tasks:
         file: tasks/personal-projects.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/nvim-setup.yml
+    - name:
+      include_tasks:
+        file: tasks/nvim-setup.yml
     # - name:
     #   include_tasks:
     #     file: tasks/brave.yml
