@@ -25,18 +25,18 @@
     - name:
       include_tasks:
         file: tasks/core-setup.yml
-    - name:
-      include_tasks:
-        file: tasks/docker-setup.yml
-    - name:
-      include_tasks:
-        file: tasks/asdf-setup.yml
-    - name:
-      include_tasks:
-        file: tasks/npm-packages.yml
+    # - name:
+    #  include_tasks:
+    #    file: tasks/docker-setup.yml
     - name:
       include_tasks:
         file: tasks/zsh-setup.yml
+    - name:
+      include_tasks:
+        file: tasks/asdf-setup.yml
+    # - name:
+    #   include_tasks:
+    #     file: tasks/npm-packages.yml
     # - name:
     #   include_tasks:
     #     file: tasks/slack-setup.yml
@@ -46,9 +46,9 @@
     - name:
       include_tasks:
         file: tasks/nvim-setup.yml
-    - name:
-      include_tasks:
-        file: tasks/brave-setup.yml
+    #- name:
+    #  include_tasks:
+    #    file: tasks/brave-setup.yml
     - name:
       include_tasks:
         file: tasks/dotfiles.yml
