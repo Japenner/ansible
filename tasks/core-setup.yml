@@ -1,7 +1,14 @@
 - name: Install System Packages 1 (build-essential, cmake, pkg-config, pthread)
   become: true
   apt:
-    name: ["build-essential", "cmake", "pkg-config", "libpthread-stubs0-dev"]
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - build-essential
+    - cmake
+    - pkg-config
+    - libpthread-stubs0-dev
   tags:
     - install
     - neovim
@@ -10,7 +17,15 @@
 - name: Install System Packages 2 (lua, unzip, libtool, libtool-bin, gettext)
   become: true
   apt:
-    name: [ "lua5.1", "unzip", "libtool", "libtool-bin", "gettext"]
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - lua5.1
+    - unzip
+    - libtool
+    - libtool-bin
+    - gettext
   tags:
     - install
     - neovim
@@ -19,7 +34,14 @@
 - name: Install System Packages 3 (compton, curl, htop, lazydocker)
   become: true
   apt:
-    name: [ "compton", "curl", "htop", "lazydocker" ]
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - compton
+    - curl
+    - htop
+    - lazydocker
   tags:
     - install
     - core
@@ -27,7 +49,12 @@
 - name: Install System Packages 4 (golang, lsof)
   become: true
   apt:
-    name: [ "golang", "lsof" ]
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - golang
+    - lsof
   tags:
     - install
     - core
@@ -35,7 +62,13 @@
 - name: Install System Packages 5 (ccache, ninja-build, python3-pip)
   become: true
   apt:
-    name: [ "ccache", "ninja-build", "python3-pip" ]
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - ccache
+    - ninja-build
+    - python3-pip
   tags:
     - install
     - core
@@ -43,7 +76,12 @@
 - name: Install System Packages 6 (dconf-editor, nvidia-settings)
   become: true
   apt:
-    name: [ "dconf-editor", "nvidia-settings" ]
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - dconf-editor
+    - nvidia-settings
   tags:
     - install
     - core
@@ -51,7 +89,12 @@
 - name: Install System Packages 7 (moreutils, clangd)
   become: true
   apt:
-    name: [ "moreutils", "clangd" ]
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - moreutils
+    - clangd
   tags:
     - install
     - core
