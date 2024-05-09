@@ -16,7 +16,7 @@
   tasks:
     - name:
       include_tasks:
-        file: tasks/ssh.yml
+        file: tasks/ssh-setup.yml
     - name:
       include_tasks:
         file: tasks/git-setup.yml
