@@ -2,35 +2,30 @@
   npm:
     name: yarn
     global: yes
-  tags:
-    - install
-    - node
+  tags: &tags_for_npm_tasks [ 'install', 'node' ]
+
 - name: Install eslint
   npm:
     name: eslint
     global: yes
-  tags:
-    - install
-    - node
+  tags: *tags_for_npm_tasks
+
 - name: Install Typescript server
   npm:
     name: typescript-language-server
     global: yes
-  tags:
-    - install
-    - node
+  tags: *tags_for_npm_tasks
+
 - name: Install Typescript
   npm:
     name: typescript
     global: yes
-  tags:
-    - install
-    - node
+  tags: *tags_for_npm_tasks
+
 - name: Install TS-Node
   npm:
     name: ts-node
     global: yes
-  tags:
-    - install
-    - node
+  tags: *tags_for_npm_tasks
+
 
