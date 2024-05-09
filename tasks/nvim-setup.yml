@@ -1,42 +1,34 @@
-- name: Remove neovim
+- name: Remove Neovim
   shell: rm -rf ~/neovim
-  tags:
-    - install
-    - neovim
+  tags: &nvim_setup_tags [ 'install', 'neovim' ]
+
 - name: Get Packer
   ansible.builtin.git:
     repo: 'https://github.com/wbthomason/packer.nvim'
     dest: "{{ lookup('env', 'HOME') }}/.local/share/nvim/site/pack/packer/start/packer.nvim"
-  tags:
-    - install
-    - neovim
+  tags: *nvim_setup_tags
+
 - name: Clone Neovim
   ansible.builtin.git:
     repo: 'https://github.com/neovim/neovim.git'
     dest: "{{ lookup('env', 'HOME') }}/neovim"
-  tags:
-    - install
-    - neovim
-- name: Build neovim
+  tags: *nvim_setup_tags
+
+- name: Build Neovim
   shell: "cd {{ lookup('env', 'HOME') }}/neovim && make -j 20"
-  tags:
-    - install
-    - neovim
-- name: Install neovim
+  tags: *nvim_setup_tags
+
+- name: Install Neovim
   become: true
   shell: "cd {{ lookup('env', 'HOME') }}/neovim && make install"
-  tags:
-    - install
-    - neovim
+  tags: *nvim_setup_tags
+
 - name: Neovim Plugin Development 1
   become: true
   apt: name=luarocks
-  tags:
-    - install
-    - neovim
+  tags: *nvim_setup_tags
+
 - name: Neovim Plugin Development 2 luacheck
   become: true
   shell: luarocks install luacheck
-  tags:
-    - install
-    - neovim
+  tags: *nvim_setup_tags

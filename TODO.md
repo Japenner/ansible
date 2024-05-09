@@ -20,7 +20,7 @@ sudo udevadm trigger
 swapped out / key for /? key.  This seems to be the correct move.
 
 ### Permissions with ssh
-I think its a user issue.  I think that if I redo it with --become-user theprimeagen it will work better.
+I think its a user issue.  I think that if I redo it with --become-user jacob it will work better.
 remove all become_user root
 
 ### Plug
@@ -39,7 +39,7 @@ bad order of tasks.
 ### Ansible pull
 no vault
 make it clone
---become-user theprimeagen
+--become-user jacob
 -t install .  I just keep forgetting this...
 - clone it with https then change remote to ssh once ssh is up.
 
