@@ -15,6 +15,29 @@
     dest: "{{ lookup('env', 'HOME') }}/.asdf"
   tags: *tags_for_asdf_tasks
 
+- name: Add asdf to ~/.bashrc
+  become: true
+  shell: echo ". \"$HOME/.asdf/asdf.sh\"" >> ~/.zshrc
+  tags: *tags_for_asdf_tasks
+
+- name: Add asdf completions to fpath
+  become: true
+  block:
+    - name: Append completions to fpath
+      shell: |
+        echo "# append completions to fpath
+        fpath=(${ASDF_DIR}/completions \$fpath)
+        # initialise completions with ZSH's compinit
+        autoload -Uz compinit && compinit" >> ~/.zshrc
+  tags: *tags_for_asdf_tasks
+
+- name: Source .zshrc
+  become: true
+  shell: source ~/.zshrc
+  args:
+    executable: /bin/zsh
+  tags: *tags_for_asdf_tasks
+
 - name: Add Ruby plugin
   become: true
   shell: asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
@@ -32,3 +55,5 @@
   become: true
   shell: asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
   tags: *tags_for_asdf_tasks
+
+

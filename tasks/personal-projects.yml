@@ -4,6 +4,10 @@
     personal_projects:
       - name: jp_com
         repo: "git@github.com:{{ github_account }}/jp_com.git"
+      - name: obsidian 
+        repo: "git@github.com:{{ github_account }}/obsidian.git"
+      - name: docker 
+        repo: "git@github.com:{{ github_account }}/homelab.git"
   tags: &tags_for_project_tasks [ 'dotfiles', 'install', 'personal-project' ]
 
 - name: Check if project {{ item.name }} exists
