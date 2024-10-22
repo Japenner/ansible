@@ -15,5 +15,5 @@
   tags: *dotfiles_setup_tags
 
 - name: Stow dotfiles
-  shell: cd $HOME/.dotfiles && ./ubuntu
+  shell: "cd {{ lookup('env', 'HOME') }}/.dotfiles && ./ubuntu"
   tags: *dotfiles_setup_tags
