@@ -28,6 +28,7 @@
         - nvidia-settings
         - moreutils
         - clangd
+        - openssl
       productivity:
         - tmux
         - wireshark
@@ -35,6 +36,7 @@
         - xclip
         - tldr
         - ripgrep
+        - code
     docker_packages:
       - docker-ce
       - docker-ce-cli
@@ -48,9 +50,6 @@
         repo: "https://github.com/lukechilds/zsh-nvm.git"
       - name: zsh-syntax-highlighting
         repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
-    asdf_dependencies:
-      - curl
-      - git
     project_repos:
       - name: jp_com
         repo: "git@github.com:{{ github_account }}/jp_com.git"
@@ -62,14 +61,13 @@
     - name: Update Apt
       become: true
       apt:
-        force_apt_get: true
         update_cache: true
         state: present
       tags: install
 
   tasks:
     # SSH Setup
-    - name: Ensure .ssh directory and keys are set up
+    - name: Ensure .ssh directory exists
       file:
         dest: "{{ dest_key | dirname }}"
         mode: 0700
@@ -79,7 +77,7 @@
     - name: Copy SSH keys
       copy:
         src: "{{ item }}"
-        dest: "{{ dest_key }}{{ item.split('.')[-1] }}"
+        dest: "{{ dest_key if 'pub' not in item else dest_key + '.pub' }}"
         mode: "{{ '0600' if 'pub' not in item else '0644' }}"
       loop:
         - "{{ source_key }}"
@@ -111,21 +109,15 @@
       tags: git
 
     # Install System Packages
-    - name: Install core packages
+    - name: Install core and productivity packages
       become: true
       apt:
-        name: "{{ apt_packages.core }}"
+        name: "{{ apt_packages.core + apt_packages.productivity }}"
         state: present
         update_cache: true
-      tags: core
-
-    - name: Install productivity packages
-      become: true
-      apt:
-        name: "{{ apt_packages.productivity }}"
-        state: present
-        update_cache: true
-      tags: productivity
+      tags:
+        - core
+        - productivity
 
     # GitHub CLI Setup
     - name: Install GitHub CLI
@@ -136,26 +128,30 @@
       tags: cli
 
     # Obsidian App Setup
-    - name: Download Obsidian
+    - name: Download and Install Obsidian
+      become: true
       get_url:
         url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/obsidian_1.7.4_amd64.deb"
         dest: /tmp/obsidian.deb
         mode: "0644"
+      register: obsidian_download
       tags: obsidian
 
-    - name: Install Obsidian
+    - name: Install Obsidian .deb package
       become: true
       apt:
         deb: /tmp/obsidian.deb
         state: present
+      when: obsidian_download.changed
       tags: obsidian
 
     # Lazydocker CLI Setup
-    - name: Download Lazydocker
+    - name: Download and Install Lazydocker
       become: true
       get_url:
         url: "https://github.com/jesseduffield/lazydocker/releases/download/v0.23.3/lazydocker_0.23.3_Linux_x86_64.tar.gz"
         dest: /tmp/lazydocker.tar.gz
+      register: lazydocker_download
       tags: lazydocker
 
     - name: Extract and Install Lazydocker
@@ -166,10 +162,11 @@
         remote_src: yes
       args:
         creates: /usr/local/bin/lazydocker
+      when: lazydocker_download.changed
       tags: lazydocker
 
     # Docker Setup
-    - name: Remove Docker related packages
+    - name: Remove conflicting Docker packages
       become: true
       apt:
         name: "{{ item }}"
@@ -189,7 +186,7 @@
         state: present
       tags: docker
 
-    - name: Download Docker GPG key and setup repository
+    - name: Setup Docker Repository and Install
       block:
         - name: Create directory for Docker GPG key
           file:
@@ -208,16 +205,16 @@
             echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
           args:
             creates: /etc/apt/sources.list.d/docker.list
-      tags: docker
 
-    - name: Install Docker packages
-      become: true
-      apt:
-        name: "{{ docker_packages }}"
-        state: present
+        - name: Install Docker packages
+          become: true
+          apt:
+            name: "{{ docker_packages }}"
+            state: present
       tags: docker
 
     - name: Ensure Docker service is running and user is added
+      become: true
       block:
         - service:
             name: docker
@@ -230,7 +227,7 @@
       tags: docker
 
     # ZSH & Oh-My-Zsh Setup
-    - name: Install ZSH and change shell
+    - name: Install ZSH, change shell, and setup Oh-My-Zsh
       block:
         - name: Install ZSH
           apt:
@@ -239,7 +236,9 @@
           become: true
 
         - name: Change shell to ZSH
-          shell: chsh -s $(which zsh) "{{ user }}"
+          become: true
+          command: chsh -s /usr/bin/zsh "{{ user }}"
+          tags: zsh
 
         - name: Install Oh-My-Zsh if missing
           shell: |
@@ -250,11 +249,65 @@
             creates: "/home/{{ user }}/.oh-my-zsh"
       tags: zsh
 
-    # Projects Checkout
-    - name: Clone personal repositories
+    - name: Clone ZSH plugins and themes
       ansible.builtin.git:
         repo: "{{ item.repo }}"
-        dest: "{{ personal }}/{{ item.name }}"
-        update: yes
+        dest: "~/.oh-my-zsh/custom/plugins/{{ item.name }}"
+      loop: "{{ zsh_plugins }}"
+      tags: zsh
+
+    - name: Install Starship Prompt
+      shell: curl -fsSL https://starship.rs/install.sh | bash -s -- -y
+      args:
+        creates: "/usr/local/bin/starship"
+      tags: zsh
+
+    # Install ASDF
+    - name: Clone ASDF and configure
+      ansible.builtin.git:
+        repo: "https://github.com/asdf-vm/asdf.git"
+        dest: "{{ lookup('env', 'HOME') }}/.asdf"
+        depth: 1
+      tags: asdf
+
+    - name: Add ASDF to ~/.zshrc
+      lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.zshrc"
+        line: '. "$HOME/.asdf/asdf.sh"'
+        create: yes
+      tags: asdf
+
+    # Projects Checkout
+    - name: Ensure the directory is a valid Git repository or clone if not
+      ansible.builtin.command: git -C "{{ personal }}/{{ item.name }}" rev-parse --is-inside-work-tree
+      register: git_check
+      ignore_errors: yes
+      changed_when: false
       loop: "{{ project_repos }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item.name }}"
+      tags: projects
+
+    - name: Clone the repository if it is not a valid Git repository
+      ansible.builtin.git:
+        repo: "{{ item.item.repo }}"
+        dest: "{{ personal }}/{{ item.item.name }}"
+        clone: yes
+        update: no
+      when: item.rc != 0
+      loop: "{{ git_check.results }}"
+      loop_control:
+        loop_var: item
+      tags: projects
+
+    - name: Pull latest changes if the repository exists
+      ansible.builtin.git:
+        repo: "{{ item.item.repo }}"
+        dest: "{{ personal }}/{{ item.item.name }}"
+        update: yes
+      when: item.rc == 0
+      loop: "{{ git_check.results }}"
+      loop_control:
+        loop_var: item
       tags: projects

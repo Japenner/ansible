@@ -7,4 +7,4 @@ if [ -z "$1" ]; then
 fi
 
 # Run the specified Ansible playbook
-ansible-playbook --ask-vault-pass --ask-become-pass "$1"
+ansible-playbook --ask-vault-pass --ask-become-pass "$1.yml"
