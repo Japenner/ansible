@@ -1,18 +1,52 @@
 #!/usr/bin/env bash
-# Undo node
-npm uninstall -g yarn typescript-language-server typescript
-sudo apt purge nodejs npm
-rm /usr/local/lib/node_modules/n/bin/n
-rm /usr/local/bin/n
-rm /usr/local/bin/node
 
-# Undo zsh
-uninstall_oh_my_zsh
-chsh /bin/bash
-sudo apt purge zsh
+# Undo Node.js & npm related
+npm uninstall -g yarn typescript-language-server typescript ts-node eslint
+sudo apt purge -y nodejs npm
+rm -f /usr/local/lib/node_modules/n/bin/n
+rm -f /usr/local/bin/n
+rm -f /usr/local/bin/node
+
+# Undo ZSH and Oh-My-Zsh
+if [ -d "$HOME/.oh-my-zsh" ]; then
+  rm -rf "$HOME/.oh-my-zsh"
+fi
+chsh -s /bin/bash
+sudo apt purge -y zsh
+
+# Undo Docker
+sudo apt purge -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo rm -rf /etc/apt/keyrings/docker.asc /etc/apt/sources.list.d/docker.list
+sudo rm -rf /var/lib/docker /var/lib/containerd
+
+# Undo GitHub CLI
+sudo apt purge -y gh
 
 # Undo Slack
-sudo apt purge slack-desktop
+sudo apt purge -y slack-desktop
+rm -f /tmp/slack.deb
 
-# Undo Core Install
-sudo apt -y purge curl htop stow tmux build-essential wireshark golang fzf lsof kdenlive i3 gimp ccache ninja-build yarn python3-pip xclip slack dconf-editor nvidia-settings brave-browser pavucontrol clangd screenkey lua tldr
+# Undo Obsidian
+sudo apt purge -y obsidian
+rm -f /tmp/obsidian.deb
+
+# Undo Lazydocker
+rm -f /usr/local/bin/lazydocker
+rm -f /tmp/lazydocker.tar.gz
+
+# Undo core packages
+sudo apt purge -y build-essential cmake pkg-config libpthread-stubs0-dev lua5.1 unzip libtool libtool-bin gettext compton curl htop golang lsof ccache ninja-build python3-pip dconf-editor nvidia-settings moreutils clangd
+
+# Undo productivity packages
+sudo apt purge -y tmux wireshark fzf xclip tldr ripgrep
+
+# Undo Brave Browser
+sudo apt purge -y brave-browser
+sudo rm -f /usr/share/keyrings/brave-browser-archive-keyring.gpg
+sudo rm -f /etc/apt/sources.list.d/brave-browser-release.list
+
+# Clean up residual config files and caches
+sudo apt autoremove -y
+sudo apt clean
+
+echo "All specified packages and configurations have been removed."
