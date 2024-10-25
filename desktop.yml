@@ -29,6 +29,7 @@
         - moreutils
         - clangd
         - openssl
+        - gnupg
       productivity:
         - tmux
         - wireshark
@@ -69,6 +70,70 @@
       tags: install
 
   tasks:
+    # Install Signal
+    - name: Add Signal GPG key
+      become: true
+      apt_key:
+        url: "https://updates.signal.org/desktop/apt/keys.asc"
+        state: present
+      tags: signal
+
+    - name: Add Signal repository to apt sources
+      become: true
+      apt_repository:
+        repo: "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main"
+        state: present
+        update_cache: true
+      tags: signal
+
+    - name: Install Signal
+      become: true
+      apt:
+        name: signal-desktop
+        state: present
+      tags: signal
+
+    # Install Discord
+    - name: Download and Install Discord
+      become: true
+      get_url:
+        url: "https://discordapp.com/api/download?platform=linux&format=deb"
+        dest: /tmp/discord.deb
+        mode: "0644"
+      register: discord_download
+      tags: discord
+
+    - name: Install Discord .deb package
+      become: true
+      apt:
+        deb: /tmp/discord.deb
+        state: present
+      when: discord_download.changed
+      tags: discord
+
+    # Install Brave Browser
+    - name: Add Brave Browser GPG key
+      become: true
+      apt_key:
+        url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
+        state: present
+      tags: brave
+
+    - name: Add Brave Browser repository to apt sources
+      become: true
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"
+        state: present
+        update_cache: true
+      tags: brave
+
+    - name: Install Brave Browser
+      become: true
+      apt:
+        name: brave-browser
+        state: present
+      tags: brave
+
     # SSH Setup
     - name: Ensure .ssh directory exists
       file:
