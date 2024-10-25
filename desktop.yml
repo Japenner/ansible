@@ -30,6 +30,7 @@
         - clangd
         - openssl
         - gnupg
+        - libpq-dev
       productivity:
         - tmux
         - wireshark
@@ -112,19 +113,29 @@
       tags: discord
 
     # Install Brave Browser
-    - name: Add Brave Browser GPG key
+    - name: Check if Brave Browser is installed
+      shell: "dpkg -l | grep brave-browser"
+      register: brave_check
+      ignore_errors: true
+      changed_when: false
+      tags: brave
+
+    - name: Add Brave Browser GPG key securely
       become: true
-      apt_key:
+      get_url:
         url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
-        state: present
+        dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
+        mode: "0644"
+      when: brave_check.rc != 0
       tags: brave
 
     - name: Add Brave Browser repository to apt sources
       become: true
       apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"
         state: present
         update_cache: true
+      when: brave_check.rc != 0
       tags: brave
 
     - name: Install Brave Browser
@@ -132,6 +143,7 @@
       apt:
         name: brave-browser
         state: present
+      when: brave_check.rc != 0
       tags: brave
 
     # SSH Setup
