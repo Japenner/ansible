@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-ansible-playbook --ask-vault-pass --ask-become-pass local.yml
