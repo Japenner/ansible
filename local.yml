@@ -6,15 +6,15 @@
     user: "jacob"
     github_account: "Japenner"
   pre_tasks:
-  - name: Update Apt
-    become: true
-    apt:
-      force_apt_get: true
-      update_cache: true
-      state: present
-    tags:
-      - install
-      - core
+    - name: Update Apt
+      become: true
+      apt:
+        force_apt_get: true
+        update_cache: true
+        state: present
+      tags:
+        - install
+        - core
   tasks:
     - name:
       include_tasks:
@@ -25,34 +25,33 @@
     - name:
       include_tasks:
         file: tasks/core-setup.yml
-    # - name:
-    #  include_tasks:
-    #    file: tasks/docker-setup.yml
+    - name:
+      include_tasks:
+        file: tasks/docker-setup.yml
     - name:
       include_tasks:
         file: tasks/zsh-setup.yml
     - name:
       include_tasks:
         file: tasks/asdf-setup.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/npm-packages.yml
-    # - name:
-    #   include_tasks:
-    #     file: tasks/slack-setup.yml
+    - name:
+      include_tasks:
+        file: tasks/npm-packages.yml
+    - name:
+      include_tasks:
+        file: tasks/slack-setup.yml
     - name:
       include_tasks:
         file: tasks/personal-projects.yml
     - name:
       include_tasks:
         file: tasks/nvim-setup.yml
-    #- name:
-    #  include_tasks:
-    #    file: tasks/brave-setup.yml
+    - name:
+      include_tasks:
+        file: tasks/brave-setup.yml
     - name:
       include_tasks:
         file: tasks/dotfiles.yml
     - name:
       include_tasks:
         file: tasks/productivity-tools.yml
-
