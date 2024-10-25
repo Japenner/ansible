@@ -1,19 +1,18 @@
 - name: kdenlive ppa (ppa:kdenlive/kdenlive-stable)
   become: true
   apt_repository:
-   repo: ppa:kdenlive/kdenlive-stable
-   state: present
-   update_cache: True
-  tags: &productivity_tags [ 'install', 'productivity' ]
+    repo: ppa:kdenlive/kdenlive-stable
+    state: present
+    update_cache: True
+  tags: &productivity_tags ["install", "productivity"]
 
 - name: shutter ppa (ppa:linuxuprising/shutter)
   become: true
   apt_repository:
-   repo: ppa:linuxuprising/shutter
-   state: present
-   update_cache: True
+    repo: ppa:linuxuprising/shutter
+    state: present
+    update_cache: True
   tags: *productivity_tags
-
 
 - name: Install packages
   become: true
@@ -25,13 +24,8 @@
     - tmux
     - wireshark
     - fzf
-    - kdenlive
-    - gimp
     - xclip
-    - screenkey
     - tldr
     - ripgrep
-    - shutter
-    - lazydocker
-  tags: *productivity_tags
-
+    # - lazydocker
+  tags: &productivity_tags ["install", "productivity"]
