@@ -48,10 +48,11 @@
     zsh_plugins:
       - name: zsh-autosuggestions
         repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
-      - name: zsh-nvm
-        repo: "https://github.com/lukechilds/zsh-nvm.git"
       - name: zsh-syntax-highlighting
         repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+    zsh_themes:
+      - name: powerlevel10k
+        repo: "https://github.com/romkatv/powerlevel10k.git"
     project_repos:
       - name: jp_com
         repo: "git@github.com:{{ github_account }}/jp_com.git"
@@ -329,11 +330,18 @@
             creates: "/home/{{ user }}/.oh-my-zsh"
       tags: zsh
 
-    - name: Clone ZSH plugins and themes
+    - name: Clone ZSH plugins
       ansible.builtin.git:
         repo: "{{ item.repo }}"
         dest: "~/.oh-my-zsh/custom/plugins/{{ item.name }}"
       loop: "{{ zsh_plugins }}"
+      tags: zsh
+
+    - name: Clone ZSH themes
+      ansible.builtin.git:
+        repo: "{{ item.repo }}"
+        dest: "~/.oh-my-zsh/custom/themes/{{ item.name }}"
+      loop: "{{ zsh_themes }}"
       tags: zsh
 
     - name: Install Starship Prompt
