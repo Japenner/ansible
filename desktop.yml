@@ -95,6 +95,38 @@
         state: present
       tags: signal
 
+    # Install Fira Code Mono Nerd Font
+    - name: Ensure fonts directory exists
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
+        state: directory
+        mode: "0755"
+      tags: font
+
+    - name: Download Fira Code Mono Nerd Font
+      get_url:
+        url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/FiraCode.zip"
+        dest: "/tmp/FiraCode.zip"
+        mode: "0644"
+      tags: font
+
+    - name: Unzip Fira Code Nerd Font
+      unarchive:
+        src: "/tmp/FiraCode.zip"
+        dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
+        remote_src: yes
+      tags: font
+
+    - name: Refresh font cache
+      command: fc-cache -fv
+      tags: font
+
+    - name: Remove downloaded font zip file
+      file:
+        path: "/tmp/FiraCode.zip"
+        state: absent
+      tags: font
+
     # Install Discord
     - name: Download and Install Discord
       become: true
