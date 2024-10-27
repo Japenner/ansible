@@ -185,9 +185,11 @@
         value: "{{ item.value }}"
         scope: global
       loop:
-        - { name: user.email, value: "japenner@gmail.com" }
-        - { name: user.name, value: "Jacob Penner" }
-      tags: git
+        - { name: "user.email", value: "japenner@gmail.com" }
+        - { name: "user.name", value: "Jacob Penner" }
+        - { name: "push.default", value: "current" }
+      tags:
+        - git
 
     # Install System Packages
     - name: Install core and productivity packages
