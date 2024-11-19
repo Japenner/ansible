@@ -79,49 +79,37 @@
 
   tasks:
     - name: Signal Desktop Application Setup
-      include_tasks:
-        file: tasks/ubuntu/signal-setup.yml
+      include_tasks: tasks/ubuntu/signal-setup.yml
 
     - name: FiraCode Mono Nerd Font Setup
-      include_tasks:
-        file: tasks/ubuntu/fonts-setup.yml
+      include_tasks: tasks/ubuntu/fonts-setup.yml
 
     - name: Discord Desktop Application Setup
-      include_tasks:
-        file: tasks/ubuntu/discord-setup.yml
+      include_tasks: tasks/ubuntu/discord-setup.yml
 
     - name: Brave Browser Setup
-      include_tasks:
-        file: tasks/ubuntu/brave-browser-setup.yml
+      include_tasks: tasks/ubuntu/brave-browser-setup.yml
 
     - name: SSH Setup
-      include_tasks:
-        file: tasks/ubuntu/ssh-setup.yml
+      include_tasks: tasks/ubuntu/ssh-setup.yml
 
     - name: Git Setup
-      include_tasks:
-        file: tasks/ubuntu/git-setup.yml
+      include_tasks: tasks/ubuntu/git-setup.yml
 
     - name: Install Core and Productivity Package
-      include_tasks:
-        file: tasks/ubuntu/core-setup.yml
+      include_tasks: tasks/ubuntu/core-setup.yml
 
     - name: Obsidian Desktop Application Setup
-      include_tasks:
-        file: tasks/ubuntu/obsidian-setup.yml
+      include_tasks: tasks/ubuntu/obsidian-setup.yml
 
     - name: Docker Setup
-      include_tasks:
-        file: tasks/ubuntu/docker-setup.yml
+      include_tasks: tasks/ubuntu/docker-setup.yml
 
     - name: ZSH and Oh-My-Zsh Setup
-      include_tasks:
-        file: tasks/ubuntu/docker-setup.yml
+      include_tasks: tasks/ubuntu/zsh-setup.yml
 
     - name: ASDF Version Manager Setup
-      include_tasks:
-        file: tasks/ubuntu/asdf-setup.yml
+      include_tasks: tasks/ubuntu/asdf-setup.yml
 
     - name: Git Clone and Update Personal Projects
-      include_tasks:
-        file: tasks/ubuntu/personal-projects.yml
+      include_tasks: tasks/ubuntu/personal-projects.yml
