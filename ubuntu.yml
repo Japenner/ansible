@@ -77,168 +77,33 @@
       tags: install
 
   tasks:
-    # Install Signal
-    - name: Add Signal GPG key
-      become: true
-      apt_key:
-        url: "https://updates.signal.org/desktop/apt/keys.asc"
-        state: present
-      tags: signal
+    - name: Signal Desktop Application Setup
+      include_tasks:
+        file: tasks/ubuntu/signal-setup.yml
 
-    - name: Add Signal repository to apt sources
-      become: true
-      apt_repository:
-        repo: "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main"
-        state: present
-        update_cache: true
-      tags: signal
+    - name: FiraCode Mono Nerd Font Setup
+      include_tasks:
+        file: tasks/ubuntu/fonts-setup.yml
 
-    - name: Install Signal
-      become: true
-      apt:
-        name: signal-desktop
-        state: present
-      tags: signal
+    - name: Discord Desktop Application Setup
+      include_tasks:
+        file: tasks/ubuntu/discord-setup.yml
 
-    # Install Fira Code Mono Nerd Font
-    - name: Ensure fonts directory exists
-      file:
-        path: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
-        state: directory
-        mode: "0755"
-      tags: font
+    - name: Brave Browser Setup
+      include_tasks:
+        file: tasks/ubuntu/brave-browser-setup.yml
 
-    - name: Download Fira Code Mono Nerd Font
-      get_url:
-        url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/FiraCode.zip"
-        dest: "/tmp/FiraCode.zip"
-        mode: "0644"
-      tags: font
+    - name: SSH Setup
+      include_tasks:
+        file: tasks/ubuntu/ssh-setup.yml
 
-    - name: Unzip Fira Code Nerd Font
-      unarchive:
-        src: "/tmp/FiraCode.zip"
-        dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
-        remote_src: yes
-      tags: font
+    - name: Git Setup
+      include_tasks:
+        file: tasks/ubuntu/git-setup.yml
 
-    - name: Refresh font cache
-      command: fc-cache -fv
-      tags: font
-
-    - name: Remove downloaded font zip file
-      file:
-        path: "/tmp/FiraCode.zip"
-        state: absent
-      tags: font
-
-    # Install Discord
-    - name: Download and Install Discord
-      become: true
-      get_url:
-        url: "https://discordapp.com/api/download?platform=linux&format=deb"
-        dest: /tmp/discord.deb
-        mode: "0644"
-      register: discord_download
-      tags: discord
-
-    - name: Install Discord .deb package
-      become: true
-      apt:
-        deb: /tmp/discord.deb
-        state: present
-      when: discord_download.changed
-      tags: discord
-
-    # Install Brave Browser
-    - name: Check if Brave Browser is installed
-      shell: "dpkg -l | grep brave-browser"
-      register: brave_check
-      ignore_errors: true
-      changed_when: false
-      tags: brave
-
-    - name: Add Brave Browser GPG key securely
-      become: true
-      get_url:
-        url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
-        dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
-        mode: "0644"
-      when: brave_check.rc != 0
-      tags: brave
-
-    - name: Add Brave Browser repository to apt sources
-      become: true
-      apt_repository:
-        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"
-        state: present
-        update_cache: true
-      when: brave_check.rc != 0
-      tags: brave
-
-    - name: Install Brave Browser
-      become: true
-      apt:
-        name: brave-browser
-        state: present
-      when: brave_check.rc != 0
-      tags: brave
-
-    # SSH Setup
-    - name: Ensure .ssh directory exists
-      file:
-        dest: "{{ dest_key | dirname }}"
-        mode: 0700
-        state: directory
-      tags: ssh
-
-    - name: Copy SSH keys
-      copy:
-        src: "{{ item }}"
-        dest: "{{ dest_key if 'pub' not in item else dest_key + '.pub' }}"
-        mode: "{{ '0600' if 'pub' not in item else '0644' }}"
-      loop:
-        - "{{ source_key }}"
-        - "{{ source_key }}.pub"
-      tags: ssh
-
-    - name: Set authorized key from file
-      authorized_key:
-        user: "{{ user }}"
-        state: present
-        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_ed25519.pub') }}"
-      tags: ssh
-
-    - name: Add GitHub to known hosts
-      shell: "ssh-keyscan -H github.com >> {{ lookup('env', 'HOME') }}/.ssh/known_hosts"
-      args:
-        creates: "{{ lookup('env', 'HOME') }}/.ssh/known_hosts"
-      tags: ssh
-
-    # Git Setup
-    - name: Configure global git settings
-      git_config:
-        name: "{{ item.name }}"
-        value: "{{ item.value }}"
-        scope: global
-      loop:
-        - { name: "user.email", value: "japenner@gmail.com" }
-        - { name: "user.name", value: "Jacob Penner" }
-        - { name: "push.default", value: "current" }
-        - { name: "core.editor", value: "code --wait" }
-      tags:
-        - git
-
-    # Install System Packages
-    - name: Install core and productivity packages
-      become: true
-      apt:
-        name: "{{ apt_packages.core + apt_packages.productivity }}"
-        state: present
-        update_cache: true
-      tags:
-        - core
-        - productivity
+    - name: Install Core and Productivity Package
+      include_tasks:
+        file: tasks/ubuntu/core-setup.yml
 
     # GitHub CLI Setup
     - name: Install GitHub CLI

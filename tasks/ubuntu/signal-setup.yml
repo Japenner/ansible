@@ -1,0 +1,21 @@
+- name: Add Signal GPG key
+  become: true
+  apt_key:
+    url: "https://updates.signal.org/desktop/apt/keys.asc"
+    state: present
+  tags: signal
+
+- name: Add Signal repository to apt sources
+  become: true
+  apt_repository:
+    repo: "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main"
+    state: present
+    update_cache: true
+  tags: signal
+
+- name: Install Signal
+  become: true
+  apt:
+    name: signal-desktop
+    state: present
+  tags: signal
