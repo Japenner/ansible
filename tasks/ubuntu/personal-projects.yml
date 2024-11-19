@@ -1,0 +1,36 @@
+- name: Check if project directories exist
+  ansible.builtin.stat:
+    path: "{{ personal }}/{{ item.name }}"
+  register: repo_dir_check
+  loop: "{{ project_repos }}"
+  loop_control:
+    loop_var: item
+    index_var: repo_index
+  tags: projects
+
+- name: Clone or update personal repositories
+  block:
+    - name: Clone the repository if not present
+      ansible.builtin.git:
+        repo: "{{ item.repo }}"
+        dest: "{{ personal }}/{{ item.name }}"
+        clone: yes
+        update: no
+      when: not repo_dir_check.results[repo_index].stat.exists
+      loop: "{{ project_repos }}"
+      loop_control:
+        loop_var: item
+        index_var: repo_index
+      tags: projects
+
+- name: Pull latest changes if the repository exists
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ personal }}/{{ item.name }}"
+    update: yes
+  when: repo_dir_check.results[repo_index].stat.exists
+  loop: "{{ project_repos }}"
+  loop_control:
+    loop_var: item
+    index_var: repo_index
+  tags: projects

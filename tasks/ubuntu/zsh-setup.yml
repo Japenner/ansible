@@ -1,0 +1,35 @@
+- name: Install ZSH, change shell, and setup Oh-My-Zsh
+  block:
+    - name: Install ZSH
+      apt:
+        name: zsh
+        state: present
+      become: true
+
+    - name: Change shell to ZSH
+      become: true
+      command: chsh -s /usr/bin/zsh "{{ user }}"
+      tags: zsh
+
+    - name: Install Oh-My-Zsh if missing
+      shell: |
+        if [ ! -d /home/{{ user }}/.oh-my-zsh ]; then
+          sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)";
+        fi
+      args:
+        creates: "/home/{{ user }}/.oh-my-zsh"
+  tags: zsh
+
+- name: Clone ZSH plugins
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "~/.oh-my-zsh/custom/plugins/{{ item.name }}"
+  loop: "{{ zsh_plugins }}"
+  tags: zsh
+
+- name: Clone ZSH themes
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "~/.oh-my-zsh/custom/themes/{{ item.name }}"
+  loop: "{{ zsh_themes }}"
+  tags: zsh
