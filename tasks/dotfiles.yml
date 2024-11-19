@@ -2,7 +2,7 @@
   become: true
   apt:
     name: stow
-  tags: &dotfiles_setup_tags [ 'install', 'dotfiles', 'stow' ]
+  tags: &dotfiles_setup_tags ["install", "dotfiles", "stow"]
 
 - name: Cloning .dotfiles
   ansible.builtin.git:
@@ -12,6 +12,12 @@
     update: yes
     accept_hostkey: yes
     version: master
+  tags: *dotfiles_setup_tags
+
+- name: Backup existing .zshrc if it exists
+  ansible.builtin.command: mv ~/.zshrc ~/.zshrc.bak
+  args:
+    creates: ~/.zshrc.bak
   tags: *dotfiles_setup_tags
 
 - name: Stow dotfiles
