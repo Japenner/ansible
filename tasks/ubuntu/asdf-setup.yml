@@ -5,13 +5,6 @@
     depth: 1
   tags: asdf
 
-- name: Add ASDF to ~/.zshrc
-  lineinfile:
-    path: "{{ lookup('env', 'HOME') }}/.zshrc"
-    line: '. "$HOME/.asdf/asdf.sh"'
-    create: yes
-  tags: asdf
-
 - name: Add ASDF plugin for Ruby
   shell: asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
   args:

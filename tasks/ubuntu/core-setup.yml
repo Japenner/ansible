@@ -1,9 +1,9 @@
-- name: Install core and productivity packages
+- name: Install Core and Productivity Packages
   become: true
   apt:
+    update_cache: true
     name: "{{ apt_packages.core + apt_packages.productivity }}"
     state: present
-    update_cache: true
   tags:
     - core
     - productivity

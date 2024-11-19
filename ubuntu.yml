@@ -31,6 +31,8 @@
         - openssl
         - gnupg
         - libpq-dev
+        - ca-certificates
+        - stow
       productivity:
         - tmux
         - wireshark
@@ -78,29 +80,17 @@
       tags: install
 
   tasks:
-    - name: Signal Desktop Application Setup
-      include_tasks: tasks/ubuntu/signal-setup.yml
-
-    - name: FiraCode Mono Nerd Font Setup
-      include_tasks: tasks/ubuntu/fonts-setup.yml
-
-    - name: Discord Desktop Application Setup
-      include_tasks: tasks/ubuntu/discord-setup.yml
-
-    - name: Brave Browser Setup
-      include_tasks: tasks/ubuntu/brave-browser-setup.yml
-
     - name: SSH Setup
       include_tasks: tasks/ubuntu/ssh-setup.yml
 
     - name: Git Setup
       include_tasks: tasks/ubuntu/git-setup.yml
 
-    - name: Install Core and Productivity Package
-      include_tasks: tasks/ubuntu/core-setup.yml
+    - name: FiraCode Mono Nerd Font Setup
+      include_tasks: tasks/ubuntu/fonts-setup.yml
 
-    - name: Obsidian Desktop Application Setup
-      include_tasks: tasks/ubuntu/obsidian-setup.yml
+    - name: Install Core and Productivity Packages
+      include_tasks: tasks/ubuntu/core-setup.yml
 
     - name: Docker Setup
       include_tasks: tasks/ubuntu/docker-setup.yml
@@ -111,5 +101,23 @@
     - name: ASDF Version Manager Setup
       include_tasks: tasks/ubuntu/asdf-setup.yml
 
+    - name: Dotfiles Setup
+      include_tasks: tasks/ubuntu/dotfiles-setup.yml
+
     - name: Git Clone and Update Personal Projects
       include_tasks: tasks/ubuntu/personal-projects.yml
+
+    - name: Signal Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/signal-setup.yml
+
+    - name: Discord Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/discord-setup.yml
+
+    - name: Brave Browser Application Installation and Setup
+      include_tasks: tasks/ubuntu/brave-browser-setup.yml
+
+    - name: Obsidian Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/obsidian-setup.yml
+
+    - name: Slack Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/slack-setup.yml

@@ -11,13 +11,6 @@
     - runc
   tags: docker
 
-- name: Install Docker prerequisites and GPG key
-  become: true
-  apt:
-    name: ["ca-certificates", "curl", "gnupg"]
-    state: present
-  tags: docker
-
 - name: Setup Docker Repository and Install
   block:
     - name: Create directory for Docker GPG key
