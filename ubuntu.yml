@@ -39,6 +39,7 @@
         - tldr
         - ripgrep
         - code
+        - shutter
     docker_packages:
       - docker-ce
       - docker-ce-cli
@@ -48,6 +49,8 @@
     zsh_plugins:
       - name: zsh-autosuggestions
         repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
+      - name: zsh-completions
+        repo: "https://github.com/zsh-users/zsh-completions.git"
       - name: zsh-syntax-highlighting
         repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
     zsh_themes:
@@ -62,6 +65,8 @@
         repo: "git@github.com:{{ github_account }}/awana_app.git"
       - name: anki
         repo: "git@github.com:{{ github_account }}/anki.git"
+      - name: jacobs_toolbox
+        repo: "git@github.com:{{ github_account }}/jacobs_toolbox.git"
 
   pre_tasks:
     - name: Update Apt
@@ -220,6 +225,7 @@
         - { name: "user.email", value: "japenner@gmail.com" }
         - { name: "user.name", value: "Jacob Penner" }
         - { name: "push.default", value: "current" }
+        - { name: "core.editor", value: "code --wait" }
       tags:
         - git
 
@@ -281,65 +287,65 @@
       tags: lazydocker
 
     # Docker Setup
-    - name: Remove conflicting Docker packages
-      become: true
-      apt:
-        name: "{{ item }}"
-        state: absent
-      loop:
-        - docker.io
-        - docker-doc
-        - podman-docker
-        - containerd
-        - runc
-      tags: docker
+    # - name: Remove conflicting Docker packages
+    #   become: true
+    #   apt:
+    #     name: "{{ item }}"
+    #     state: absent
+    #   loop:
+    #     - docker.io
+    #     - docker-doc
+    #     - podman-docker
+    #     - containerd
+    #     - runc
+    #   tags: docker
 
-    - name: Install Docker prerequisites and GPG key
-      become: true
-      apt:
-        name: ["ca-certificates", "curl", "gnupg"]
-        state: present
-      tags: docker
+    # - name: Install Docker prerequisites and GPG key
+    #   become: true
+    #   apt:
+    #     name: ["ca-certificates", "curl", "gnupg"]
+    #     state: present
+    #   tags: docker
 
-    - name: Setup Docker Repository and Install
-      block:
-        - name: Create directory for Docker GPG key
-          file:
-            path: /etc/apt/keyrings
-            state: directory
-            mode: "0755"
+    # - name: Setup Docker Repository and Install
+    #   block:
+    #     - name: Create directory for Docker GPG key
+    #       file:
+    #         path: /etc/apt/keyrings
+    #         state: directory
+    #         mode: "0755"
 
-        - name: Add Docker GPG key
-          get_url:
-            url: https://download.docker.com/linux/ubuntu/gpg
-            dest: /etc/apt/keyrings/docker.asc
-            mode: "0644"
+    #     - name: Add Docker GPG key
+    #       get_url:
+    #         url: https://download.docker.com/linux/ubuntu/gpg
+    #         dest: /etc/apt/keyrings/docker.asc
+    #         mode: "0644"
 
-        - name: Add Docker APT source list
-          shell: |
-            echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
-          args:
-            creates: /etc/apt/sources.list.d/docker.list
+    #     - name: Add Docker APT source list
+    #       shell: |
+    #         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
+    #       args:
+    #         creates: /etc/apt/sources.list.d/docker.list
 
-        - name: Install Docker packages
-          become: true
-          apt:
-            name: "{{ docker_packages }}"
-            state: present
-      tags: docker
+    #     - name: Install Docker packages
+    #       become: true
+    #       apt:
+    #         name: "{{ docker_packages }}"
+    #         state: present
+    #   tags: docker
 
-    - name: Ensure Docker service is running and user is added
-      become: true
-      block:
-        - service:
-            name: docker
-            state: started
-            enabled: true
-        - user:
-            name: "{{ user }}"
-            groups: docker
-            append: true
-      tags: docker
+    # - name: Ensure Docker service is running and user is added
+    #   become: true
+    #   block:
+    #     - service:
+    #         name: docker
+    #         state: started
+    #         enabled: true
+    #     - user:
+    #         name: "{{ user }}"
+    #         groups: docker
+    #         append: true
+    #   tags: docker
 
     # ZSH & Oh-My-Zsh Setup
     - name: Install ZSH, change shell, and setup Oh-My-Zsh
@@ -384,19 +390,19 @@
         creates: "/usr/local/bin/starship"
 
     # Spaceship Theme Setup
-    - name: Clone Spaceship Prompt theme
-      ansible.builtin.git:
-        repo: "https://github.com/denysdovhan/spaceship-prompt.git"
-        dest: "~/.oh-my-zsh/custom/themes/spaceship-prompt"
-        depth: 1
-      tags: zsh
+    # - name: Clone Spaceship Prompt theme
+    #   ansible.builtin.git:
+    #     repo: "https://github.com/denysdovhan/spaceship-prompt.git"
+    #     dest: "~/.oh-my-zsh/custom/themes/spaceship-prompt"
+    #     depth: 1
+    #   tags: zsh
 
-    - name: Create symbolic link for Spaceship Prompt theme
-      file:
-        src: "~/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme"
-        dest: "~/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
-        state: link
-      tags: zsh
+    # - name: Create symbolic link for Spaceship Prompt theme
+    #   file:
+    #     src: "~/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme"
+    #     dest: "~/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+    #     state: link
+    #   tags: zsh
 
     # Install ASDF
     - name: Clone ASDF and configure
@@ -411,6 +417,68 @@
         path: "{{ lookup('env', 'HOME') }}/.zshrc"
         line: '. "$HOME/.asdf/asdf.sh"'
         create: yes
+      tags: asdf
+
+    # Source ASDF for the Ansible session
+    - name: Source ASDF
+      shell: . $HOME/.asdf/asdf.sh
+      args:
+        executable: /bin/bash
+
+    # Install ASDF plugin for Ruby
+    - name: Add ASDF plugin for Ruby
+      shell: asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
+      args:
+        creates: "{{ lookup('env', 'HOME') }}/.asdf/plugins/ruby"
+      tags: asdf
+
+      # Add ASDF plugin for Node.js
+    - name: Add ASDF plugin for Node.js
+      shell: . $HOME/.asdf/asdf.sh && asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+      args:
+        creates: "{{ lookup('env', 'HOME') }}/.asdf/plugins/nodejs"
+      environment:
+        PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
+      tags: asdf
+
+    # Verify Node.js plugin installation
+    - name: Verify Node.js plugin and keyring import script existence
+      stat:
+        path: "{{ lookup('env', 'HOME') }}/.asdf/plugins/nodejs/bin/import-release-team-keyring"
+      register: keyring_script
+      tags: asdf
+
+    # Import Node.js release team's OpenPGP keys
+    - name: Import Node.js release team's OpenPGP keys (required for Node.js plugin)
+      shell: . $HOME/.asdf/asdf.sh && bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+      args:
+        executable: /bin/bash
+      environment:
+        PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
+      when: keyring_script.stat.exists
+      tags: asdf
+
+    # Error message if keyring import script is missing
+    - name: Fail if Node.js keyring import script is missing
+      fail:
+        msg: "The Node.js keyring import script is missing. Verify the plugin installation."
+      when: not keyring_script.stat.exists
+      tags: asdf
+
+    - name: Install latest Ruby version with ASDF
+      shell: asdf install ruby latest
+      tags: asdf
+
+    - name: Set global Ruby version
+      shell: asdf global ruby latest
+      tags: asdf
+
+    - name: Install latest Node.js version with ASDF
+      shell: asdf install nodejs latest
+      tags: asdf
+
+    - name: Set global Node.js version
+      shell: asdf global nodejs latest
       tags: asdf
 
     # Projects Checkout
