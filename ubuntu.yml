@@ -1,0 +1,123 @@
+- hosts: localhost
+  vars:
+    source_key: "./.ssh/id_ed25519"
+    dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
+    personal: "{{ lookup('env', 'HOME') }}/repos/personal"
+    user: "jacob"
+    github_account: "Japenner"
+    apt_packages:
+      core:
+        - build-essential
+        - cmake
+        - pkg-config
+        - libpthread-stubs0-dev
+        - lua5.1
+        - unzip
+        - libtool
+        - libtool-bin
+        - gettext
+        - compton
+        - curl
+        - htop
+        - golang
+        - lsof
+        - ccache
+        - ninja-build
+        - python3-pip
+        - dconf-editor
+        - nvidia-settings
+        - moreutils
+        - clangd
+        - openssl
+        - gnupg
+        - libpq-dev
+        - ca-certificates
+        - stow
+      productivity:
+        - tmux
+        - wireshark
+        - fzf
+        - xclip
+        - tldr
+        - ripgrep
+        - code
+        - shutter
+        - gh
+    docker_packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    zsh_plugins:
+      - name: zsh-autosuggestions
+        repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
+      - name: zsh-completions
+        repo: "https://github.com/zsh-users/zsh-completions.git"
+      - name: zsh-syntax-highlighting
+        repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+    zsh_themes:
+      - name: powerlevel10k
+        repo: "https://github.com/romkatv/powerlevel10k.git"
+    project_repos:
+      - name: jp_com
+        repo: "git@github.com:{{ github_account }}/jp_com.git"
+      - name: obsidian
+        repo: "git@github.com:{{ github_account }}/obsidian.git"
+      - name: awana_app
+        repo: "git@github.com:{{ github_account }}/awana_app.git"
+      - name: anki
+        repo: "git@github.com:{{ github_account }}/anki.git"
+      - name: jacobs_toolbox
+        repo: "git@github.com:{{ github_account }}/jacobs_toolbox.git"
+
+  pre_tasks:
+    - name: Update Apt
+      become: true
+      apt:
+        update_cache: true
+        state: present
+      tags: install
+
+  tasks:
+    - name: SSH Setup
+      include_tasks: tasks/ubuntu/ssh-setup.yml
+
+    - name: Git Setup
+      include_tasks: tasks/ubuntu/git-setup.yml
+
+    - name: FiraCode Mono Nerd Font Setup
+      include_tasks: tasks/ubuntu/fonts-setup.yml
+
+    - name: Install Core and Productivity Packages
+      include_tasks: tasks/ubuntu/core-setup.yml
+
+    - name: Docker Setup
+      include_tasks: tasks/ubuntu/docker-setup.yml
+
+    - name: ZSH and Oh-My-Zsh Setup
+      include_tasks: tasks/ubuntu/zsh-setup.yml
+
+    - name: ASDF Version Manager Setup
+      include_tasks: tasks/ubuntu/asdf-setup.yml
+
+    - name: Dotfiles Setup
+      include_tasks: tasks/ubuntu/dotfiles-setup.yml
+
+    - name: Git Clone and Update Personal Projects
+      include_tasks: tasks/ubuntu/personal-projects.yml
+
+    - name: Signal Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/signal-setup.yml
+
+    - name: Discord Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/discord-setup.yml
+
+    - name: Brave Browser Application Installation and Setup
+      include_tasks: tasks/ubuntu/brave-browser-setup.yml
+
+    - name: Obsidian Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/obsidian-setup.yml
+
+    - name: Slack Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/slack-setup.yml

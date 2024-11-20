@@ -1,0 +1,12 @@
+- name: Configure global git settings
+  git_config:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    scope: global
+  loop:
+    - { name: "user.email", value: "japenner@gmail.com" }
+    - { name: "user.name", value: "Jacob Penner" }
+    - { name: "push.default", value: "current" }
+    - { name: "core.editor", value: "code --wait" }
+  tags:
+    - git

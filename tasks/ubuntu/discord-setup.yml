@@ -1,0 +1,16 @@
+- name: Download and Install Discord
+  become: true
+  get_url:
+    url: "https://discordapp.com/api/download?platform=linux&format=deb"
+    dest: /tmp/discord.deb
+    mode: "0644"
+  register: discord_download
+  tags: discord
+
+- name: Install Discord .deb package
+  become: true
+  apt:
+    deb: /tmp/discord.deb
+    state: present
+  when: discord_download.changed
+  tags: discord

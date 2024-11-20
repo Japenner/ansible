@@ -1,0 +1,57 @@
+- name: Clone ASDF and configure
+  ansible.builtin.git:
+    repo: "https://github.com/asdf-vm/asdf.git"
+    dest: "{{ lookup('env', 'HOME') }}/.asdf"
+    depth: 1
+  tags: asdf
+
+- name: Add ASDF plugin for Ruby
+  shell: asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
+  args:
+    creates: "{{ lookup('env', 'HOME') }}/.asdf/plugins/ruby"
+  tags: asdf
+
+- name: Add ASDF plugin for Node.js
+  shell: . $HOME/.asdf/asdf.sh && asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+  args:
+    creates: "{{ lookup('env', 'HOME') }}/.asdf/plugins/nodejs"
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
+  tags: asdf
+
+- name: Verify Node.js plugin and keyring import script existence
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/.asdf/plugins/nodejs/bin/import-release-team-keyring"
+  register: keyring_script
+  tags: asdf
+
+- name: Import Node.js release team's OpenPGP keys (required for Node.js plugin)
+  shell: . $HOME/.asdf/asdf.sh && bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
+  when: keyring_script.stat.exists
+  tags: asdf
+
+- name: Fail if Node.js keyring import script is missing
+  fail:
+    msg: "The Node.js keyring import script is missing. Verify the plugin installation."
+  when: not keyring_script.stat.exists
+  tags: asdf
+
+- name: Install latest Ruby version with ASDF
+  shell: asdf install ruby latest
+  tags: asdf
+
+- name: Set global Ruby version
+  shell: asdf global ruby latest
+  tags: asdf
+
+- name: Install latest Node.js version with ASDF
+  shell: asdf install nodejs latest
+  tags: asdf
+
+- name: Set global Node.js version
+  shell: asdf global nodejs latest
+  tags: asdf

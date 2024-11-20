@@ -1,0 +1,16 @@
+- name: Download and Install Obsidian
+  become: true
+  get_url:
+    url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.4/obsidian_1.7.4_amd64.deb"
+    dest: /tmp/obsidian.deb
+    mode: "0644"
+  register: obsidian_download
+  tags: obsidian
+
+- name: Install Obsidian .deb package
+  become: true
+  apt:
+    deb: /tmp/obsidian.deb
+    state: present
+  when: obsidian_download.changed
+  tags: obsidian
