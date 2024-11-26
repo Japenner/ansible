@@ -33,6 +33,8 @@
         - libpq-dev
         - ca-certificates
         - stow
+        - apt-transport-https
+        - software-properties-common
       productivity:
         - tmux
         - wireshark
