@@ -62,17 +62,12 @@
       - name: powerlevel10k
         repo: "https://github.com/romkatv/powerlevel10k.git"
     project_repos:
-      - name: jp_com
-        repo: "git@github.com:{{ github_account }}/jp_com.git"
-      - name: obsidian
-        repo: "git@github.com:{{ github_account }}/obsidian.git"
-      - name: awana_app
-        repo: "git@github.com:{{ github_account }}/awana_app.git"
-      - name: anki
-        repo: "git@github.com:{{ github_account }}/anki.git"
-      - name: jacobs_toolbox
-        repo: "git@github.com:{{ github_account }}/jacobs_toolbox.git"
-
+      - anki
+      - jacobs_toolbox
+      - jp_com
+      - obsidian
+      - project_ideas
+      - yt_dlp_wrapper
   pre_tasks:
     - name: Update Apt
       become: true
