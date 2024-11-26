@@ -19,26 +19,26 @@
     PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
   tags: asdf
 
-- name: Verify Node.js plugin and keyring import script existence
-  stat:
-    path: "{{ lookup('env', 'HOME') }}/.asdf/plugins/nodejs/bin/import-release-team-keyring"
-  register: keyring_script
-  tags: asdf
+# - name: Verify Node.js plugin and keyring import script existence
+#   stat:
+#     path: "{{ lookup('env', 'HOME') }}/.asdf/plugins/nodejs/bin/import-release-team-keyring"
+#   register: keyring_script
+#   tags: asdf
 
-- name: Import Node.js release team's OpenPGP keys (required for Node.js plugin)
-  shell: . $HOME/.asdf/asdf.sh && bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-  args:
-    executable: /bin/bash
-  environment:
-    PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
-  when: keyring_script.stat.exists
-  tags: asdf
+# - name: Import Node.js release team's OpenPGP keys (required for Node.js plugin)
+#   shell: . $HOME/.asdf/asdf.sh && bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+#   args:
+#     executable: /bin/bash
+#   environment:
+#     PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
+#   when: keyring_script.stat.exists
+#   tags: asdf
 
-- name: Fail if Node.js keyring import script is missing
-  fail:
-    msg: "The Node.js keyring import script is missing. Verify the plugin installation."
-  when: not keyring_script.stat.exists
-  tags: asdf
+# - name: Fail if Node.js keyring import script is missing
+#   fail:
+#     msg: "The Node.js keyring import script is missing. Verify the plugin installation."
+#   when: not keyring_script.stat.exists
+#   tags: asdf
 
 - name: Install latest Ruby version with ASDF
   shell: asdf install ruby latest
