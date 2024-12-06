@@ -116,5 +116,8 @@
     - name: Obsidian Desktop Application Installation and Setup
       include_tasks: tasks/ubuntu/obsidian-setup.yml
 
+    - name: RustDesk Desktop Application Installation and Setup
+      include_tasks: tasks/ubuntu/rustdesk-setup.yml
+
     - name: Slack Desktop Application Installation and Setup
       include_tasks: tasks/ubuntu/slack-setup.yml
