@@ -1,7 +1,7 @@
 - name: Download and Install Slack
   become: true
   get_url:
-    url: https://downloads.slack-edge.com/linux_releases/slack-desktop-4.41.98-amd64.deb
+    url: https://downloads.slack-edge.com/desktop-releases/linux/x64/4.41.98/slack-desktop-4.41.98-amd64.deb
     dest: /tmp/slack.deb
     mode: "0644"
   register: slack_download
