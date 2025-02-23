@@ -68,13 +68,42 @@
       - obsidian
       - project_ideas
       - yt_dlp_wrapper
-  pre_tasks:
-    - name: Update Apt
-      become: true
-      apt:
-        update_cache: true
-        state: present
-      tags: install
+    deb_packages:
+      - name: rustdesk
+        url: "https://github.com/rustdesk/rustdesk/releases/download/1.3.5/rustdesk-1.3.5-x86_64.deb"
+        version: "1.3.5"
+        arch: "x86_64"
+      - name: discord
+        url: "https://discord.com/api/download?platform=linux&format=deb"
+        version: "latest"
+        arch: "amd64"
+      - name: obsidian
+        url: "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.7.7/obsidian_1.7.7_amd64.deb"
+        version: "1.7.7"
+        arch: "amd64"
+    repo_packages:
+      - name: slack
+        gpg_key_url: "https://packagecloud.io/slacktechnologies/slack/gpgkey"
+        repo: "https://packagecloud.io/slacktechnologies/slack/debian/"
+        build: jessie
+        branch: main
+      - name: signal-desktop
+        gpg_key_url: "https://updates.signal.org/desktop/apt/keys.asc"
+        repo: "https://updates.signal.org/desktop/apt"
+        build: stable
+        branch: main
+      - name: brave-browser
+        gpg_key_url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
+        repo: "https://brave-browser-apt-release.s3.brave.com/"
+        build: stable
+        branch: main
+    pre_tasks:
+      - name: Update Apt
+        become: true
+        apt:
+          update_cache: true
+          state: present
+        tags: install
 
   tasks:
     - name: SSH Setup
@@ -104,20 +133,10 @@
     - name: Git Clone and Update Personal Projects
       include_tasks: tasks/ubuntu/personal-projects.yml
 
-    - name: Signal Desktop Application Installation and Setup
-      include_tasks: tasks/ubuntu/signal-setup.yml
+    - name: Install .deb Packages
+      include_tasks: tasks/ubuntu/deb-package-setup.yml
+      with_items: "{{ deb_packages }}"
 
-    - name: Discord Desktop Application Installation and Setup
-      include_tasks: tasks/ubuntu/discord-setup.yml
-
-    - name: Brave Browser Application Installation and Setup
-      include_tasks: tasks/ubuntu/brave-browser-setup.yml
-
-    - name: Obsidian Desktop Application Installation and Setup
-      include_tasks: tasks/ubuntu/obsidian-setup.yml
-
-    - name: RustDesk Desktop Application Installation and Setup
-      include_tasks: tasks/ubuntu/rustdesk-setup.yml
-
-    - name: Slack Desktop Application Installation and Setup
-      include_tasks: tasks/ubuntu/slack-setup.yml
+    - name: Install Repository Only Packages
+      include_tasks: tasks/ubuntu/repo-package-setup.yml
+      with_items: "{{ repo_packages }}"

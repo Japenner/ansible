@@ -2,6 +2,7 @@
   vars:
     slack_version: "4.41.98"
     slack_arch: "amd64"
+  tags: &tags_for_slack_tasks ["install", "slack", "desktop"]
 
 - name: Check if Slack is Installed and Get Version
   become: true
@@ -9,17 +10,20 @@
   register: slack_check
   changed_when: false
   failed_when: false # Allow task to proceed even if Slack is not installed
+  tags: *tags_for_slack_tasks
 
 - name: Parse Installed Slack Version
   set_fact:
     installed_slack_version: "{{ slack_check.stdout | regex_search('[0-9]+\\.[0-9]+\\.[0-9]+') }}"
   when: slack_check.rc == 0 # Only parse version if Slack is installed
+  tags: *tags_for_slack_tasks
 
 - name: Check if Slack Needs to Be Updated
   set_fact:
     slack_needs_update: true
   when: installed_slack_version is undefined or
     (installed_slack_version is defined and installed_slack_version is version(slack_version, '<'))
+  tags: *tags_for_slack_tasks
 
 - name: Download Slack .deb Package
   become: true
@@ -28,7 +32,7 @@
     dest: "/tmp/slack-desktop-{{ slack_version }}-{{ slack_arch }}.deb"
     mode: "0644"
   when: slack_needs_update
-  tags: &tags_for_slack_tasks ["install", "slack", "desktop"]
+  tags: *tags_for_slack_tasks
 
 - name: Install Slack .deb Package
   become: true

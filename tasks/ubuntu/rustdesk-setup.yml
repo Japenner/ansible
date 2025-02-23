@@ -8,18 +8,21 @@
   command: "rustdesk --version"
   register: rustdesk_check
   changed_when: false
-  failed_when: false  # Allow task to proceed even if RustDesk is not installed
+  failed_when: false # Allow task to proceed even if RustDesk is not installed
+  tags: &tags_for_rustdesk_tasks ["install", "slack", "desktop"]
 
 - name: Parse Installed RustDesk Version
   set_fact:
     installed_rustdesk_version: "{{ rustdesk_check.stdout | regex_search('[0-9]+\\.[0-9]+\\.[0-9]+') }}"
-  when: rustdesk_check.rc == 0  # Only parse version if RustDesk is installed
+  when: rustdesk_check.rc == 0 # Only parse version if RustDesk is installed
+  tags: *tags_for_rustdesk_tasks
 
 - name: Check if RustDesk Needs to Be Updated
   set_fact:
     rustdesk_needs_update: true
   when: installed_rustdesk_version is undefined or
-        (installed_rustdesk_version is defined and installed_rustdesk_version is version(rustdesk_version, '<'))
+    (installed_rustdesk_version is defined and installed_rustdesk_version is version(rustdesk_version, '<'))
+  tags: *tags_for_rustdesk_tasks
 
 - name: Download RustDesk .deb Package
   become: true

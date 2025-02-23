@@ -1,0 +1,42 @@
+- name: Install .deb Packages
+  become: true
+  block:
+    - name: Check if {{ item.name }} is Installed and Get Version
+      command: "{{ item.name }} --version"
+      register: package_check
+      changed_when: false
+      failed_when: false
+      vars:
+        version: "{{ item.version }}"
+        arch: "{{ item.arch }}"
+
+    - name: Set Installed Version Variable for {{ item.name }}
+      set_fact:
+        installed_version: "{{ hostvars[inventory_hostname]['installed_' + (item.name | regex_replace('-', '_')) + '_version'] | default('') }}"
+
+    - name: Check if {{ item.name }} Needs to Be Updated
+      set_fact:
+        needs_update: true
+      when:
+        - item.version != "latest"
+        - installed_version == '' or
+          installed_version is version(item.version, '<')
+
+    - name: Download {{ item.name }} .deb Package
+      get_url:
+        url: "{{ item.url }}"
+        dest: "/tmp/{{ item.name }}-{{ item.version }}-{{ item.arch }}.deb"
+        mode: "0644"
+      when: needs_update
+
+    - name: Install {{ item.name }} .deb Package
+      apt:
+        deb: "/tmp/{{ item.name }}-{{ item.version }}-{{ item.arch }}.deb"
+        state: present
+      when: needs_update
+
+    - name: Clean Up {{ item.name }} .deb Package
+      file:
+        path: "/tmp/{{ item.name }}-{{ item.version }}-{{ item.arch }}.deb"
+        state: absent
+  tags: install
