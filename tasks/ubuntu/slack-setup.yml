@@ -1,16 +1,50 @@
-- name: Download and Install Slack
-  become: true
-  get_url:
-    url: https://downloads.slack-edge.com/linux_releases/slack-desktop-4.41.98-amd64.deb
-    dest: /tmp/slack.deb
-    mode: "0644"
-  register: slack_download
+- name: Define Slack Variables
+  vars:
+    slack_version: "4.41.98"
+    slack_arch: "amd64"
   tags: &tags_for_slack_tasks ["install", "slack", "desktop"]
 
-- name: Install Slack .deb package
+- name: Check if Slack is Installed and Get Version
+  become: true
+  command: "slack --version"
+  register: slack_check
+  changed_when: false
+  failed_when: false # Allow task to proceed even if Slack is not installed
+  tags: *tags_for_slack_tasks
+
+- name: Parse Installed Slack Version
+  set_fact:
+    installed_slack_version: "{{ slack_check.stdout | regex_search('[0-9]+\\.[0-9]+\\.[0-9]+') }}"
+  when: slack_check.rc == 0 # Only parse version if Slack is installed
+  tags: *tags_for_slack_tasks
+
+- name: Check if Slack Needs to Be Updated
+  set_fact:
+    slack_needs_update: true
+  when: installed_slack_version is undefined or
+    (installed_slack_version is defined and installed_slack_version is version(slack_version, '<'))
+  tags: *tags_for_slack_tasks
+
+- name: Download Slack .deb Package
+  become: true
+  get_url:
+    url: "https://downloads.slack-edge.com/desktop-releases/linux/x64/{{ slack_version }}/slack-desktop-{{ slack_version }}-{{ slack_arch }}.deb"
+    dest: "/tmp/slack-desktop-{{ slack_version }}-{{ slack_arch }}.deb"
+    mode: "0644"
+  when: slack_needs_update
+  tags: *tags_for_slack_tasks
+
+- name: Install Slack .deb Package
   become: true
   apt:
-    deb: /tmp/slack.deb
+    deb: "/tmp/slack-desktop-{{ slack_version }}-{{ slack_arch }}.deb"
     state: present
-  when: slack_download.changed
+  when: slack_needs_update
+  tags: *tags_for_slack_tasks
+
+- name: Clean Up Slack .deb Package
+  become: true
+  file:
+    path: "/tmp/slack-desktop-{{ slack_version }}-{{ slack_arch }}.deb"
+    state: absent
   tags: *tags_for_slack_tasks

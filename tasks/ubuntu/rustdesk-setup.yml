@@ -1,0 +1,56 @@
+- name: Define RustDesk Variables
+  vars:
+    rustdesk_version: "1.3.5"
+    rustdesk_arch: "x86_64"
+
+- name: Check if RustDesk is Installed and Get Version
+  become: true
+  command: "rustdesk --version"
+  register: rustdesk_check
+  changed_when: false
+  failed_when: false # Allow task to proceed even if RustDesk is not installed
+  tags: &tags_for_rustdesk_tasks ["install", "slack", "desktop"]
+
+- name: Parse Installed RustDesk Version
+  set_fact:
+    installed_rustdesk_version: "{{ rustdesk_check.stdout | regex_search('[0-9]+\\.[0-9]+\\.[0-9]+') }}"
+  when: rustdesk_check.rc == 0 # Only parse version if RustDesk is installed
+  tags: *tags_for_rustdesk_tasks
+
+- name: Check if RustDesk Needs to Be Updated
+  set_fact:
+    rustdesk_needs_update: true
+  when: installed_rustdesk_version is undefined or
+    (installed_rustdesk_version is defined and installed_rustdesk_version is version(rustdesk_version, '<'))
+  tags: *tags_for_rustdesk_tasks
+
+- name: Download RustDesk .deb Package
+  become: true
+  get_url:
+    url: "https://github.com/rustdesk/rustdesk/releases/download/{{ rustdesk_version }}/rustdesk-{{ rustdesk_version }}-{{ rustdesk_arch }}.deb"
+    dest: "/tmp/rustdesk-{{ rustdesk_version }}-{{ rustdesk_arch }}.deb"
+    mode: "0644"
+  when: rustdesk_needs_update
+  tags: *tags_for_rustdesk_tasks
+
+- name: Install RustDesk .deb Package
+  become: true
+  apt:
+    deb: "/tmp/rustdesk-{{ rustdesk_version }}-{{ rustdesk_arch }}.deb"
+    state: present
+  when: rustdesk_needs_update
+  tags: *tags_for_rustdesk_tasks
+
+- name: Verify RustDesk Installation
+  become: true
+  command: "rustdesk --version"
+  register: rustdesk_check
+  changed_when: false
+  tags: *tags_for_rustdesk_tasks
+
+- name: Clean Up RustDesk .deb Package
+  become: true
+  file:
+    path: "/tmp/rustdesk-{{ rustdesk_version }}-{{ rustdesk_arch }}.deb"
+    state: absent
+  tags: *tags_for_rustdesk_tasks

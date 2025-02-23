@@ -29,6 +29,7 @@
       become: true
 
     - name: Add Docker APT source list
+      become: true
       shell: |
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
       args:
