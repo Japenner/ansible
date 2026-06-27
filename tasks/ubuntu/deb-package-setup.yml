@@ -1,42 +1,28 @@
 - name: Install .deb Packages
   become: true
   block:
-    - name: Check if {{ item.name }} is Installed and Get Version
-      command: "{{ item.name }} --version"
+    - name: Check installed version of {{ item.name }}
+      command: "dpkg-query -W -f='${Version}' {{ item.name }}"
       register: package_check
       changed_when: false
       failed_when: false
-      vars:
-        version: "{{ item.version }}"
-        arch: "{{ item.arch }}"
 
-    - name: Set Installed Version Variable for {{ item.name }}
-      set_fact:
-        installed_version: "{{ hostvars[inventory_hostname]['installed_' + (item.name | regex_replace('-', '_')) + '_version'] | default('') }}"
-
-    - name: Check if {{ item.name }} Needs to Be Updated
-      set_fact:
-        needs_update: true
-      when:
-        - item.version != "latest"
-        - installed_version == '' or
-          installed_version is version(item.version, '<')
-
-    - name: Download {{ item.name }} .deb Package
+    - name: Download {{ item.name }} .deb package
       get_url:
         url: "{{ item.url }}"
         dest: "/tmp/{{ item.name }}-{{ item.version }}-{{ item.arch }}.deb"
         mode: "0644"
-      when: needs_update
+      when: package_check.rc != 0 or (item.version != "latest" and item.version not in package_check.stdout)
 
-    - name: Install {{ item.name }} .deb Package
+    - name: Install {{ item.name }} .deb package
       apt:
         deb: "/tmp/{{ item.name }}-{{ item.version }}-{{ item.arch }}.deb"
         state: present
-      when: needs_update
+      when: package_check.rc != 0 or (item.version != "latest" and item.version not in package_check.stdout)
 
-    - name: Clean Up {{ item.name }} .deb Package
+    - name: Clean up {{ item.name }} .deb package
       file:
         path: "/tmp/{{ item.name }}-{{ item.version }}-{{ item.arch }}.deb"
         state: absent
+      when: package_check.rc != 0 or (item.version != "latest" and item.version not in package_check.stdout)
   tags: install
