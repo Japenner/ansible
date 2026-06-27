@@ -1,13 +1,16 @@
 - name: Ensure fonts directory exists
   file:
-    path: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
+    path: "/home/{{ user }}/.local/share/fonts"
     state: directory
     mode: "0755"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+  become: true
   tags: font
 
 - name: Download Fira Code Mono Nerd Font
   get_url:
-    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.3.3/FiraCode.zip"
+    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraCode.zip"
     dest: "/tmp/FiraCode.zip"
     mode: "0644"
   tags: font
@@ -15,8 +18,10 @@
 - name: Unzip Fira Code Nerd Font
   unarchive:
     src: "/tmp/FiraCode.zip"
-    dest: "{{ lookup('env', 'HOME') }}/.local/share/fonts"
+    dest: "/home/{{ user }}/.local/share/fonts"
     remote_src: yes
+  become: true
+  become_user: "{{ user }}"
   tags: font
 
 - name: Refresh font cache
