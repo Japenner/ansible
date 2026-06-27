@@ -1,52 +1,36 @@
 - name: Clone ASDF and configure
   ansible.builtin.git:
     repo: "https://github.com/asdf-vm/asdf.git"
-    dest: "{{ lookup('env', 'HOME') }}/.asdf"
+    dest: "/home/{{ user }}/.asdf"
     depth: 1
+  become: true
+  become_user: "{{ user }}"
   tags: asdf
 
-- name: Add ASDF plugin for Ruby
-  shell: asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
+- name: Add ASDF plugins
+  shell: |
+    . /home/{{ user }}/.asdf/asdf.sh && asdf plugin-add {{ item.name }} {{ item.repo }}
   args:
-    creates: "{{ lookup('env', 'HOME') }}/.asdf/plugins/ruby"
+    creates: "/home/{{ user }}/.asdf/plugins/{{ item.name }}"
+  become: true
+  become_user: "{{ user }}"
+  loop:
+    - { name: ruby,   repo: "https://github.com/asdf-vm/asdf-ruby.git" }
+    - { name: nodejs, repo: "https://github.com/asdf-vm/asdf-nodejs.git" }
+    - { name: python, repo: "https://github.com/asdf-vm/asdf-python.git" }
+    - { name: golang, repo: "https://github.com/asdf-community/asdf-golang.git" }
   tags: asdf
 
-- name: Add ASDF plugin for Node.js
-  shell: . $HOME/.asdf/asdf.sh && asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-  args:
-    creates: "{{ lookup('env', 'HOME') }}/.asdf/plugins/nodejs"
-  environment:
-    PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
-  tags: asdf
-
-- name: Add ASDF plugin for Python
-  shell: . $HOME/.asdf/asdf.sh && asdf plugin-add python https://github.com/asdf-vm/asdf-python.git
-  args:
-    creates: "{{ lookup('env', 'HOME') }}/.asdf/plugins/python"
-  environment:
-    PATH: "{{ lookup('env', 'PATH') }}:{{ lookup('env', 'HOME') }}/.asdf/bin:{{ lookup('env', 'HOME') }}/.asdf/shims"
-  tags: asdf
-
-- name: Install latest Ruby version with ASDF
-  shell: asdf install ruby latest
-  tags: asdf
-
-- name: Set global Ruby version
-  shell: asdf global ruby latest
-  tags: asdf
-
-- name: Install latest Node.js version with ASDF
-  shell: asdf install nodejs latest
-  tags: asdf
-
-- name: Set global Node.js version
-  shell: asdf global nodejs latest
-  tags: asdf
-
-- name: Install latest Python version with ASDF
-  shell: asdf install python latest
-  tags: asdf
-
-- name: Set global Python version
-  shell: asdf global python latest
+- name: Install and set global versions with ASDF
+  shell: |
+    . /home/{{ user }}/.asdf/asdf.sh
+    asdf list {{ item }} 2>/dev/null | grep -q . || asdf install {{ item }} latest
+    asdf global {{ item }} latest
+  become: true
+  become_user: "{{ user }}"
+  loop:
+    - ruby
+    - nodejs
+    - python
+    - golang
   tags: asdf
