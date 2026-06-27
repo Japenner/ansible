@@ -1,18 +1,13 @@
-- name: Add GPG Key and Repository for Repository-Based Packages
+- name: Add GPG Key and Repository for {{ item.name }}
   become: true
   block:
-    # Pre-cleanup to avoid conflicts
-    - name: Remove conflicting repository entries
-      file:
-        path: "/etc/apt/sources.list.d/{{ item.name }}*.list"
-        state: absent
-
-    - name: Add {{ item.name }} GPG Key
-      apt_key:
+    - name: Download {{ item.name }} GPG key
+      get_url:
         url: "{{ item.gpg_key_url }}"
-        state: present
+        dest: "/usr/share/keyrings/{{ item.name }}-archive-keyring.gpg"
+        mode: "0644"
 
-    - name: Add {{ item.name }} Repository
+    - name: Add {{ item.name }} repository
       apt_repository:
         repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/{{ item.name }}-archive-keyring.gpg] {{ item.repo }} {{ item.build }} {{ item.branch }}"
         state: present
@@ -22,6 +17,4 @@
       apt:
         name: "{{ item.name }}"
         state: present
-        update_cache: true
-  with_items: "{{ repo_packages }}"
   tags: repo
