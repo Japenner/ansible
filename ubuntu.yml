@@ -16,10 +16,9 @@
         - libtool
         - libtool-bin
         - gettext
-        - compton
+        - picom
         - curl
         - htop
-        - golang
         - lsof
         - ccache
         - ninja-build
