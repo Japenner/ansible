@@ -2,7 +2,10 @@
   file:
     dest: "{{ dest_key | dirname }}"
     mode: 0700
+    owner: "{{ user }}"
+    group: "{{ user }}"
     state: directory
+  become: true
   tags: ssh
 
 - name: Copy SSH keys
@@ -10,6 +13,9 @@
     src: "{{ item }}"
     dest: "{{ dest_key if 'pub' not in item else dest_key + '.pub' }}"
     mode: "{{ '0600' if 'pub' not in item else '0644' }}"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+  become: true
   loop:
     - "{{ source_key }}"
     - "{{ source_key }}.pub"
@@ -19,11 +25,14 @@
   authorized_key:
     user: "{{ user }}"
     state: present
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_ed25519.pub') }}"
+    key: "{{ lookup('file', '/home/' + user + '/.ssh/id_ed25519.pub') }}"
+  become: true
   tags: ssh
 
 - name: Add GitHub to known hosts
-  shell: "ssh-keyscan -H github.com >> {{ lookup('env', 'HOME') }}/.ssh/known_hosts"
+  shell: "ssh-keyscan -H github.com >> /home/{{ user }}/.ssh/known_hosts"
   args:
-    creates: "{{ lookup('env', 'HOME') }}/.ssh/known_hosts"
+    creates: "/home/{{ user }}/.ssh/known_hosts"
+  become: true
+  become_user: "{{ user }}"
   tags: ssh
