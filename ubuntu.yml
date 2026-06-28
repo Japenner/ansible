@@ -24,7 +24,6 @@
         - ninja-build
         - python3-pip
         - dconf-editor
-        - nvidia-settings
         - moreutils
         - clangd
         - openssl
