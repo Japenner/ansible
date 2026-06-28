@@ -23,13 +23,17 @@
 - name: Clone ZSH plugins
   ansible.builtin.git:
     repo: "{{ item.repo }}"
-    dest: "~/.oh-my-zsh/custom/plugins/{{ item.name }}"
+    dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
+  become: true
+  become_user: "{{ user }}"
   loop: "{{ zsh_plugins }}"
   tags: zsh
 
 - name: Clone ZSH themes
   ansible.builtin.git:
     repo: "{{ item.repo }}"
-    dest: "~/.oh-my-zsh/custom/themes/{{ item.name }}"
+    dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/{{ item.name }}"
+  become: true
+  become_user: "{{ user }}"
   loop: "{{ zsh_themes }}"
   tags: zsh

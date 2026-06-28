@@ -7,3 +7,18 @@
   tags:
     - core
     - productivity
+
+- name: Check for NVIDIA GPU
+  shell: lspci | grep -i nvidia
+  register: nvidia_check
+  changed_when: false
+  failed_when: false
+  tags: core
+
+- name: Install nvidia-settings if NVIDIA GPU present
+  become: true
+  apt:
+    name: nvidia-settings
+    state: present
+  when: nvidia_check.rc == 0
+  tags: core

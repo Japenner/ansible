@@ -1,146 +1,109 @@
 # Ansible Desktop Setup
 
-This repository contains a collection of Ansible playbooks and shell scripts to automate setting up a new desktop environment on Ubuntu. It includes installing necessary packages, configuring development tools, and setting up essential applications.
+Ansible playbooks to provision a fresh Ubuntu desktop from scratch — packages, shell, dev tools, dotfiles, and applications.
+
+## Overview
+
+Running `ansible-run` on a bare Ubuntu machine installs and configures everything: SSH keys, ZSH with Oh-My-Zsh, ASDF (Ruby, Node, Python, Go), Docker, FiraCode Nerd Font, dotfiles via stow, and a suite of desktop applications. The playbook is idempotent — re-running it skips what's already in place.
 
 ## Prerequisites
 
-- Ubuntu-based system
-- `sudo` privileges
-- Internet connection
+- Ubuntu 22.04+
+- `sudo` access
+- SSH private key at `.ssh/id_ed25519` in the repo root (copied to `~/.ssh/` by the playbook)
+- Ansible vault password (required for tasks that decrypt `auth_codes/` secrets)
 
-## Installation
+## Provisioning
 
-To install Ansible, run the following script:
+### Bootstrap from scratch
+
+On a fresh machine with no Ansible installed:
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/Japenner/ansible/master/ansible-run | bash
+```
+
+This installs Ansible via the official PPA, then runs `ansible-pull` to clone the repo and execute `ubuntu.yml`.
+
+### Run locally
+
+If Ansible is already installed and the repo is cloned:
+
+```bash
+# Install Ansible (if needed)
 ./install
+
+# Run the full playbook
+./run ubuntu
 ```
 
-Alternatively, you can install Ansible manually:
+`./run` wraps `ansible-playbook --ask-vault-pass --ask-become-pass` — you'll be prompted for the vault password and your sudo password.
+
+To run a subset of tasks, pass a tag directly to `ansible-playbook`:
 
 ```bash
-sudo apt install software-properties-common
-sudo apt-add-repository --yes --update ppa:ansible/ansible
-sudo apt install ansible
+ansible-playbook --ask-vault-pass --ask-become-pass --tags ssh ubuntu.yml
 ```
 
-## Running Ansible Playbooks
+Available tags: `ssh`, `zsh`, `asdf`, `core`, `productivity`, `dotfiles`, `font`, `projects`, `repo`, `install`.
 
-To execute an Ansible playbook, run the following command:
+## What Gets Installed
 
-```bash
-./run <playbook-file>
-```
+| Category | Details |
+|---|---|
+| Shell | ZSH, Oh-My-Zsh, powerlevel10k, zsh-autosuggestions, zsh-completions, zsh-syntax-highlighting |
+| Dev tools | ASDF (Ruby, Node.js, Python, Go), Docker CE, GitHub CLI |
+| Fonts | FiraCode Nerd Font v3.2.1 |
+| Dotfiles | Cloned from `github.com/Japenner/.dotfiles`, applied via `bin/setup.zsh` |
+| Core packages | build-essential, cmake, clangd, ripgrep, fzf, tmux, picom, stow, and more |
+| Desktop apps | Brave Browser, Slack, Signal, Discord, Obsidian, RustDesk |
+| Personal repos | Cloned or updated under `~/repos/personal/` |
 
-Example:
+## Development / Testing
 
-```bash
-./run local
-```
-
-This will prompt for the Ansible Vault password and system password for privileged operations.
-
-## Automated Ansible Pull
-
-To pull the latest Ansible configurations from the repository and apply them automatically, run:
-
-```bash
-./ansible-run
-```
-
-## Docker Setup
-
-To build Docker images for setting up a new machine, run:
+Docker images let you test the playbook without a real machine:
 
 ```bash
 ./build-dockers
 ```
 
-This will build:
+Builds two images:
+- `new-computer` — general desktop setup
+- `nvim-computer` — Neovim-focused setup
 
-- `new-computer`: General desktop setup container
-- `nvim-computer`: Container with Neovim setup
+## Teardown
 
-## Cleaning Up the Environment
-
-To remove installed packages and configurations, run:
+To undo everything the playbook installed:
 
 ```bash
 ./clean-env
 ```
 
-This script removes:
+Purges packages, removes configs, and cleans up APT sources.
 
-- Node.js, npm, and related packages
-- Zsh and Oh-My-Zsh
-- Docker and its configurations
-- GitHub CLI (`gh`)
-- Slack, Obsidian, and Lazydocker
-- Essential and productivity packages (e.g., `tmux`, `fzf`, `ripgrep`)
-- Brave Browser
-- Cleans up system residual files
+## Project Structure
 
-## Directory Structure
-
-```plaintext
-    .
-    ├── ansible-run
-    ├── build-dockers
-    ├── clean-env
-    ├── install
-    ├── run
-    ├── Dockerfile
-    ├── local.yml
-    ├── tasks/
-    │   ├── asdf-setup.yml
-    │   ├── brave-setup.yml
-    │   ├── core-setup.yml
-    │   ├── docker-setup.yml
-    │   ├── dotfiles.yml
-    │   ├── git-setup.yml
-    │   ├── npm-packages.yml
-    │   ├── nvim-setup.yml
-    │   ├── personal-projects.yml
-    │   ├── productivity-tools.yml
-    │   ├── slack-setup.yml
-    │   ├── ssh-setup.yml
-    │   ├── zsh-setup.yml
-    ├── ubuntu.yml
-    └── TODO.md
 ```
-
-## Ansible Playbooks
-
-### `local.yml`
-
-This is the main playbook that sets up the local machine. It includes:
-
-- SSH key setup
-- Git configuration
-- Core package installation
-- Docker setup
-- Zsh setup
-- ASDF version manager installation
-- NPM global packages installation
-- Slack installation
-- Personal projects setup
-- Neovim installation
-- Brave browser installation
-- Dotfiles setup
-- Productivity tools installation
-
-### Additional Playbooks
-
-Located under `tasks/ubuntu/`, these include configurations for:
-
-- Various software installations (Discord, Obsidian, Rustdesk, Signal, etc.)
-- Fonts and UI customization
-- Repository and package management
-
-## Contribution
-
-Feel free to fork and modify this setup according to your requirements. Pull requests are welcome!
-
-## License
-
-This project is licensed under the MIT License.
+.
+├── ubuntu.yml           # Main playbook — vars, task order, package lists
+├── ansible.cfg          # Ansible config (interpreter, inventory, host key checking)
+├── ansible-run          # Bootstrap script for fresh machines
+├── install              # Installs Ansible via PPA
+├── run                  # Wraps ansible-playbook with vault/become prompts
+├── build-dockers        # Builds Docker test images
+├── clean-env            # Removes all installed packages and configs
+├── .ssh/                # SSH keys copied to ~/.ssh/ during provisioning
+├── auth_codes/          # Vault-encrypted secrets (API keys, etc.)
+└── tasks/ubuntu/        # Task files included by ubuntu.yml
+    ├── ssh-setup.yml
+    ├── git-setup.yml
+    ├── core-setup.yml
+    ├── docker-setup.yml
+    ├── zsh-setup.yml
+    ├── asdf-setup.yml
+    ├── fonts-setup.yml
+    ├── dotfiles-setup.yml
+    ├── personal-projects.yml
+    ├── deb-package-setup.yml
+    └── repo-package-setup.yml
+```

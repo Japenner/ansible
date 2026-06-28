@@ -1,8 +1,8 @@
 - hosts: localhost
   vars:
     source_key: "./.ssh/id_ed25519"
-    dest_key: "{{ lookup('env', 'HOME') }}/.ssh/id_ed25519"
-    personal: "{{ lookup('env', 'HOME') }}/repos/personal"
+    dest_key: "/home/{{ user }}/.ssh/id_ed25519"
+    personal: "/home/{{ user }}/repos/personal"
     user: "jacob"
     github_account: "Japenner"
     apt_packages:
@@ -16,16 +16,14 @@
         - libtool
         - libtool-bin
         - gettext
-        - compton
+        - picom
         - curl
         - htop
-        - golang
         - lsof
         - ccache
         - ninja-build
         - python3-pip
         - dconf-editor
-        - nvidia-settings
         - moreutils
         - clangd
         - openssl
@@ -97,13 +95,13 @@
         repo: "https://brave-browser-apt-release.s3.brave.com/"
         build: stable
         branch: main
-    pre_tasks:
-      - name: Update Apt
-        become: true
-        apt:
-          update_cache: true
-          state: present
-        tags: install
+
+  pre_tasks:
+    - name: Update Apt
+      become: true
+      apt:
+        update_cache: true
+      tags: always
 
   tasks:
     - name: SSH Setup
