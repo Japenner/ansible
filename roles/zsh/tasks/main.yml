@@ -7,10 +7,11 @@
         name: zsh
         state: present
 
-    - name: Change shell to ZSH
+    - name: Set ZSH as the default shell
       become: true
-      ansible.builtin.command: chsh -s /usr/bin/zsh "{{ user }}"
-      changed_when: false
+      ansible.builtin.user:
+        name: "{{ user }}"
+        shell: /usr/bin/zsh
 
     - name: Install Oh-My-Zsh if missing
       ansible.builtin.shell: |

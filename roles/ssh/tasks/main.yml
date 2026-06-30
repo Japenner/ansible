@@ -33,7 +33,9 @@
 - name: Add GitHub to known hosts
   become: true
   become_user: "{{ user }}"
-  ansible.builtin.shell: "ssh-keyscan -H github.com >> /home/{{ user }}/.ssh/known_hosts"
-  args:
-    creates: "/home/{{ user }}/.ssh/known_hosts"
+  ansible.builtin.known_hosts:
+    name: github.com
+    key: "{{ lookup('pipe', 'ssh-keyscan -t ed25519 github.com') }}"
+    path: "/home/{{ user }}/.ssh/known_hosts"
+    state: present
   tags: ssh
