@@ -13,6 +13,7 @@
 
 - name: Set up Docker repository and install
   become: true
+  tags: docker
   block:
     - name: Create directory for Docker GPG key
       ansible.builtin.file:
@@ -20,11 +21,15 @@
         state: directory
         mode: "0755"
 
-    - name: Add Docker GPG key
-      ansible.builtin.command: >
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
-        gpg --dearmor -o /etc/apt/keyrings/docker.asc
-      args:
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /tmp/docker-key.asc
+        mode: "0644"
+
+    - name: Dearmor Docker GPG key
+      ansible.builtin.command:
+        cmd: gpg --dearmor -o /etc/apt/keyrings/docker.asc /tmp/docker-key.asc
         creates: /etc/apt/keyrings/docker.asc
 
     - name: Add Docker APT source list
@@ -38,10 +43,10 @@
         name: "{{ docker_packages }}"
         update_cache: true
         state: present
-  tags: docker
 
 - name: Ensure Docker service is running and user is added
   become: true
+  tags: docker
   block:
     - name: Start and enable Docker service
       ansible.builtin.service:
@@ -54,7 +59,6 @@
         name: "{{ user }}"
         groups: docker
         append: true
-  tags: docker
 
 - name: Download Lazydocker
   become: true

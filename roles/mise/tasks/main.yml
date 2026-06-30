@@ -1,6 +1,9 @@
 ---
 - name: Install mise version manager
   become: true
+  tags:
+    - asdf
+    - mise
   block:
     - name: Ensure apt keyrings directory exists
       ansible.builtin.file:
@@ -8,11 +11,15 @@
         state: directory
         mode: "0755"
 
-    - name: Add mise GPG key
-      ansible.builtin.shell:
-        cmd: >
-          curl -fsSL https://mise.jdx.dev/gpg-key.pub
-          | gpg --dearmor -o /etc/apt/keyrings/mise-archive-keyring.gpg
+    - name: Download mise GPG key
+      ansible.builtin.get_url:
+        url: https://mise.jdx.dev/gpg-key.pub
+        dest: /tmp/mise-key.asc
+        mode: "0644"
+
+    - name: Dearmor mise GPG key
+      ansible.builtin.command:
+        cmd: gpg --dearmor -o /etc/apt/keyrings/mise-archive-keyring.gpg /tmp/mise-key.asc
         creates: /etc/apt/keyrings/mise-archive-keyring.gpg
 
     - name: Add mise apt repository
@@ -26,9 +33,6 @@
       ansible.builtin.apt:
         name: mise
         state: present
-  tags:
-    - asdf
-    - mise
 
 - name: Install and set global language versions with mise
   become: true

@@ -1,5 +1,6 @@
 ---
 - name: Install ZSH and Oh-My-Zsh
+  tags: zsh
   block:
     - name: Install ZSH
       become: true
@@ -20,7 +21,6 @@
         fi
       args:
         creates: "/home/{{ user }}/.oh-my-zsh"
-  tags: zsh
 
 - name: Clone ZSH plugins
   become: true

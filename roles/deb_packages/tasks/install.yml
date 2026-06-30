@@ -1,32 +1,32 @@
 ---
-- name: "Install {{ item.name }} .deb package"
+- name: "Install .deb package: {{ item.name }}"
   become: true
   vars:
     deb_path: "/tmp/{{ item.name }}-{{ item.version }}-{{ item.arch }}.deb"
     deb_needed: "{{ package_check.rc != 0 or (item.version != 'latest' and item.version not in package_check.stdout) }}"
+  tags: install
   block:
-    - name: "Check installed version of {{ item.name }}"
+    - name: "Check installed version: {{ item.name }}"
       ansible.builtin.command: "dpkg-query -W -f='${Version}' {{ item.name }}"
       register: package_check
       changed_when: false
       failed_when: false
 
-    - name: "Download {{ item.name }} .deb package"
+    - name: "Download .deb package: {{ item.name }}"
       ansible.builtin.get_url:
         url: "{{ item.url }}"
         dest: "{{ deb_path }}"
         mode: "0644"
       when: deb_needed
 
-    - name: "Install {{ item.name }} .deb package"
+    - name: "Install downloaded .deb: {{ item.name }}"
       ansible.builtin.apt:
         deb: "{{ deb_path }}"
         state: present
       when: deb_needed
 
-    - name: "Clean up {{ item.name }} .deb package"
+    - name: "Clean up .deb package: {{ item.name }}"
       ansible.builtin.file:
         path: "{{ deb_path }}"
         state: absent
       when: deb_needed
-  tags: install
