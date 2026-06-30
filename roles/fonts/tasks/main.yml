@@ -1,35 +1,37 @@
+---
 - name: Ensure fonts directory exists
-  file:
+  become: true
+  ansible.builtin.file:
     path: "/home/{{ user }}/.local/share/fonts"
     state: directory
     mode: "0755"
     owner: "{{ user }}"
     group: "{{ user }}"
-  become: true
   tags: font
 
 - name: Download Fira Code Mono Nerd Font
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraCode.zip"
-    dest: "/tmp/FiraCode.zip"
+    dest: /tmp/FiraCode.zip
     mode: "0644"
   tags: font
 
 - name: Unzip Fira Code Nerd Font
-  unarchive:
-    src: "/tmp/FiraCode.zip"
-    dest: "/home/{{ user }}/.local/share/fonts"
-    remote_src: yes
   become: true
   become_user: "{{ user }}"
+  ansible.builtin.unarchive:
+    src: /tmp/FiraCode.zip
+    dest: "/home/{{ user }}/.local/share/fonts"
+    remote_src: true
   tags: font
 
 - name: Refresh font cache
-  command: fc-cache -fv
+  ansible.builtin.command: fc-cache -fv
+  changed_when: false
   tags: font
 
 - name: Remove downloaded font zip file
-  file:
-    path: "/tmp/FiraCode.zip"
+  ansible.builtin.file:
+    path: /tmp/FiraCode.zip
     state: absent
   tags: font

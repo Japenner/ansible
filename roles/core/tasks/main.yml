@@ -1,6 +1,7 @@
-- name: Install Core and Productivity Packages
+---
+- name: Install core and productivity packages
   become: true
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     name: "{{ apt_packages.core + apt_packages.productivity }}"
     state: present
@@ -9,7 +10,7 @@
     - productivity
 
 - name: Check for NVIDIA GPU
-  shell: lspci | grep -i nvidia
+  ansible.builtin.shell: lspci | grep -i nvidia
   register: nvidia_check
   changed_when: false
   failed_when: false
@@ -17,7 +18,7 @@
 
 - name: Install nvidia-settings if NVIDIA GPU present
   become: true
-  apt:
+  ansible.builtin.apt:
     name: nvidia-settings
     state: present
   when: nvidia_check.rc == 0

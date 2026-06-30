@@ -45,7 +45,7 @@ To run a subset of tasks, pass a tag directly to `ansible-playbook`:
 ansible-playbook --ask-vault-pass --ask-become-pass --tags ssh ubuntu.yml
 ```
 
-Available tags: `ssh`, `zsh`, `asdf`, `core`, `productivity`, `dotfiles`, `font`, `projects`, `repo`, `install`.
+Available tags: `ssh`, `zsh`, `asdf`, `core`, `productivity`, `docker`, `lazydocker`, `dotfiles`, `stow`, `font`, `projects`, `repo`, `install`.
 
 ## What Gets Installed
 

@@ -1,0 +1,7 @@
+---
+- name: Install each .deb package
+  ansible.builtin.include_tasks: install.yml
+  loop: "{{ deb_packages }}"
+  loop_control:
+    label: "{{ item.name }}"
+  tags: install
