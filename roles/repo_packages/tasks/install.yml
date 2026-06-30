@@ -1,16 +1,28 @@
 ---
 - name: "Add repository and install {{ item.name }}"
   become: true
+  vars:
+    keyring_path: "/usr/share/keyrings/{{ item.name }}-archive-keyring.gpg"
   block:
-    - name: "Download {{ item.name }} GPG key"
+    - name: "Download {{ item.name }} GPG key (binary)"
       ansible.builtin.get_url:
         url: "{{ item.gpg_key_url }}"
-        dest: "/usr/share/keyrings/{{ item.name }}-archive-keyring.gpg"
+        dest: "{{ keyring_path }}"
         mode: "0644"
+      when: not item.armored
+
+    # ASCII-armored keys (Slack, Signal) must be dearmored or apt rejects them.
+    - name: "Download and dearmor {{ item.name }} GPG key (armored)"
+      ansible.builtin.shell:
+        cmd: >
+          curl -fsSL {{ item.gpg_key_url }}
+          | gpg --dearmor -o {{ keyring_path }}
+        creates: "{{ keyring_path }}"
+      when: item.armored
 
     - name: "Add {{ item.name }} repository"
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/{{ item.name }}-archive-keyring.gpg] {{ item.repo }} {{ item.build }} {{ item.branch }}"
+        repo: "deb [arch=amd64 signed-by={{ keyring_path }}] {{ item.repo }} {{ item.build }} {{ item.branch }}"
         state: present
         update_cache: true
 
