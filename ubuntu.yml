@@ -16,7 +16,7 @@
     - core
     - docker
     - zsh
-    - asdf
+    - mise
     - dotfiles
     - personal_projects
     - deb_packages
