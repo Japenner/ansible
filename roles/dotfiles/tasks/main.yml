@@ -1,0 +1,27 @@
+---
+- name: Clone .dotfiles
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.git:
+    repo: "git@github.com:{{ github_account }}/.dotfiles.git"
+    dest: "/home/{{ user }}/.dotfiles"
+    recursive: true
+    update: true
+    accept_hostkey: true
+    version: master
+  tags:
+    - install
+    - dotfiles
+    - stow
+
+- name: Stow dotfiles
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.command: ./bin/setup.zsh
+  args:
+    chdir: "/home/{{ user }}/.dotfiles"
+  changed_when: false
+  tags:
+    - install
+    - dotfiles
+    - stow

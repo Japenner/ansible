@@ -1,0 +1,9 @@
+---
+profile: moderate
+
+exclude_paths:
+  - .github/
+  - auth_codes/
+
+skip_list:
+  - var-naming[no-role-prefix]  # shared vars live in group_vars/all.yml, not role defaults

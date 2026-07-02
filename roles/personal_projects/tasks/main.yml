@@ -1,0 +1,20 @@
+---
+- name: Check if project directories exist
+  ansible.builtin.stat:
+    path: "{{ personal }}/{{ item }}"
+  register: repo_dir_check
+  loop: "{{ project_repos }}"
+  tags: projects
+
+- name: Clone or update personal repositories
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.git:
+    repo: "git@github.com:{{ github_account }}/{{ item.item }}.git"
+    dest: "{{ personal }}/{{ item.item }}"
+    update: "{{ item.stat.exists }}"
+    accept_hostkey: true
+  loop: "{{ repo_dir_check.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  tags: projects

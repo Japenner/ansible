@@ -1,0 +1,7 @@
+---
+- name: Install each repository-only package
+  ansible.builtin.include_tasks: install.yml
+  loop: "{{ repo_packages }}"
+  loop_control:
+    label: "{{ item.name }}"
+  tags: repo

@@ -1,74 +1,80 @@
+---
 - name: Remove conflicting Docker packages
   become: true
-  apt:
-    name: "{{ item }}"
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - docker-doc
+      - podman-docker
+      - containerd
+      - runc
     state: absent
-  loop:
-    - docker.io
-    - docker-doc
-    - podman-docker
-    - containerd
-    - runc
   tags: docker
 
-- name: Setup Docker Repository and Install
+- name: Set up Docker repository and install
+  become: true
+  tags: docker
   block:
     - name: Create directory for Docker GPG key
-      file:
+      ansible.builtin.file:
         path: /etc/apt/keyrings
         state: directory
         mode: "0755"
-      become: true
 
-    - name: Add Docker GPG key
-      ansible.builtin.command: >
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
-        gpg --dearmor -o /etc/apt/keyrings/docker.asc
-      args:
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /tmp/docker-key.asc
+        mode: "0644"
+
+    - name: Dearmor Docker GPG key
+      ansible.builtin.command:
+        cmd: gpg --dearmor -o /etc/apt/keyrings/docker.asc /tmp/docker-key.asc
         creates: /etc/apt/keyrings/docker.asc
-      become: true
 
     - name: Add Docker APT source list
-      become: true
-      shell: |
+      ansible.builtin.shell: |
         echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
       args:
         creates: /etc/apt/sources.list.d/docker.list
 
     - name: Install Docker packages
-      become: true
-      apt:
+      ansible.builtin.apt:
         name: "{{ docker_packages }}"
+        update_cache: true
         state: present
-  tags: docker
 
 - name: Ensure Docker service is running and user is added
   become: true
+  tags: docker
   block:
-    - service:
+    - name: Start and enable Docker service
+      ansible.builtin.service:
         name: docker
         state: started
         enabled: true
-    - user:
+
+    - name: Add user to the docker group
+      ansible.builtin.user:
         name: "{{ user }}"
         groups: docker
         append: true
-  tags: docker
 
-- name: Download and Install Lazydocker
+- name: Download Lazydocker
   become: true
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/jesseduffield/lazydocker/releases/download/v0.23.3/lazydocker_0.23.3_Linux_x86_64.tar.gz"
     dest: /tmp/lazydocker.tar.gz
+    mode: "0644"
   register: lazydocker_download
   tags: lazydocker
 
-- name: Extract and Install Lazydocker
+- name: Extract and install Lazydocker
   become: true
-  unarchive:
+  ansible.builtin.unarchive:
     src: /tmp/lazydocker.tar.gz
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true
   args:
     creates: /usr/local/bin/lazydocker
   when: lazydocker_download.changed
