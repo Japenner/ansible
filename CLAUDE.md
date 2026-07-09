@@ -115,6 +115,7 @@ touching the same lines, say so explicitly rather than bundling the fix in.
 - **Dual package-install mechanism — repo_packages vs deb_packages**: Two distinct data-driven mechanisms live in `group_vars/all.yml` and are handled by dedicated roles: `repo_packages` adds a signed apt repository for vendors that publish one; `deb_packages` downloads a specific `.deb` file by URL and installs it directly.
 - **FQCN module style enforced throughout**: All tasks use fully-qualified collection names — `ansible.builtin.*` for core modules and `ansible.posix.*` for the one module that needs it (`authorized_key`).
 - **Makefile as the single entry point**: A single `Makefile` is the entry point for every operation: `install`, `run`, `check`, `lint`, `docker`, `test`, and `clean`.
+- **GPG key handling via get_url + gpg --dearmor, not apt_key**: `roles/repo_packages/tasks/install.yml` downloads each vendor's key with `ansible.builtin.get_url`, dearmoring it first when the vendor publishes an ASCII-armored key.
 
 ## Session handoff
 
