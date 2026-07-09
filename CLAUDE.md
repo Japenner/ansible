@@ -108,6 +108,7 @@ touching the same lines, say so explicitly rather than bundling the fix in.
 - **Single-host, local-connection execution model**: The playbook (`ubuntu.yml`) targets `hosts: localhost` with `ansible_connection=local`, and `ansible.cfg` points `inventory` at a single-entry `inventory.ini`.
 - **One-role-per-concern layout under roles/**: Each concern gets its own role under `roles/<name>/`, with its tasks in `roles/<name>/tasks/main.yml` (or split further into files like `install.yml` and pulled in via `include_tasks`, e.g. `deb_packages` and `repo_packages` looping over per-item installs).
 - **Centralized data in group_vars/all.yml**: All such data lives in `group_vars/all.yml` (package lists per category, `mise_global_tools`, `zsh_plugins`, `project_repos`, `deb_packages`, `repo_packages`, etc.).
+- **Per-role tags convention**: Every task carries a `tags:` entry matching its role name (see `ubuntu.yml` and the README's tag list), so a single concern can be provisioned in isolation with `ansible-playbook --tags zsh ubuntu.yml`.
 
 ## Session handoff
 
