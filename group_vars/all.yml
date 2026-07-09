@@ -6,9 +6,6 @@ source_key: "./.ssh/id_ed25519"
 dest_key: "/home/{{ user }}/.ssh/id_ed25519"
 personal: "/home/{{ user }}/repos/personal"
 
-git_user_name: Jacob Penner
-git_user_email: japenner@gmail.com
-
 apt_packages:
   core:
     - build-essential

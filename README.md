@@ -59,7 +59,7 @@ Every role is tagged, so you can provision one concern at a time:
 ansible-playbook --ask-vault-pass --ask-become-pass --tags ssh ubuntu.yml
 ```
 
-Available tags: `ssh`, `git`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `zsh`, `mise` (alias `asdf`), `dotfiles`, `stow`, `projects`, `install`, `repo`.
+Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `zsh`, `mise` (alias `asdf`), `dotfiles`, `stow`, `projects`, `install`, `repo`.
 
 ## What Gets Installed
 
@@ -120,11 +120,10 @@ Purges packages, removes configs, and cleans up APT sources.
 │   └── all.yml             # All data: package lists, repos, versions, users
 ├── roles/                  # One role per concern
 │   ├── ssh/                # SSH keys + GitHub known_hosts
-│   ├── git/                # Global git config
 │   ├── fonts/              # FiraCode Nerd Font
 │   ├── core/               # Core + productivity apt packages (+ NVIDIA)
 │   ├── docker/             # Docker CE + Lazydocker
-│   ├── zsh/                # ZSH, Oh-My-Zsh, plugins, themes
+│   ├── zsh/                # ZSH, Oh-My-Zsh, plugins (git config now owned entirely by dotfiles)
 │   ├── mise/               # mise version manager + global languages
 │   ├── dotfiles/           # Clone + stow ~/.dotfiles
 │   ├── personal_projects/  # Clone/update repos under ~/repos/personal
