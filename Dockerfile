@@ -25,8 +25,12 @@ RUN if [ "$INSTALL_NVIM" = "true" ]; then \
       apt-get clean && rm -rf /var/lib/apt/lists/*; \
     fi
 
-# Match the playbook's target user (uid/gid 1000, passwordless sudo)
-RUN addgroup --gid 1000 jacob && \
+# Match the playbook's target user (uid/gid 1000, passwordless sudo).
+# Ubuntu's official image ships a built-in `ubuntu` user/group at uid/gid 1000
+# since 24.04 — remove it first so it doesn't collide with `jacob`.
+RUN (userdel -r ubuntu 2>/dev/null || true) && \
+    (groupdel ubuntu 2>/dev/null || true) && \
+    addgroup --gid 1000 jacob && \
     adduser --disabled-password --gecos "" --uid 1000 --gid 1000 jacob && \
     usermod -aG sudo jacob && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
