@@ -29,6 +29,8 @@ curl -fsSL https://raw.githubusercontent.com/Japenner/ansible/main/ansible-run |
 
 This installs Ansible via the official PPA, then runs `ansible-pull` to clone the repo and execute `ubuntu.yml`.
 
+> **Known gap:** this one-liner doesn't pass a vault password, so it currently fails on the `ssh` role's vault-encrypted key copy ([#13](https://github.com/Japenner/ansible/issues/13)). Until that's fixed, clone the repo and use `make run` below instead, which prompts for the vault password interactively.
+
 ### Run locally
 
 With the repo cloned:
