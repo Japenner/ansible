@@ -1,4 +1,12 @@
 ---
+- name: Determine dpkg architecture
+  become: true
+  ansible.builtin.command:
+    cmd: dpkg --print-architecture
+  register: dpkg_arch
+  changed_when: false
+  tags: repo
+
 - name: Install each repository-only package
   ansible.builtin.include_tasks: install.yml
   loop: "{{ repo_packages }}"

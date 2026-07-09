@@ -29,7 +29,7 @@
 
     - name: "Add repository: {{ item.name }}"
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 signed-by={{ keyring_path }}] {{ item.repo }} {{ item.build }} {{ item.branch }}"
+        repo: "deb [arch={{ dpkg_arch.stdout }} signed-by={{ keyring_path }}] {{ item.repo }} {{ item.build }} {{ item.branch }}"
         state: present
         update_cache: true
 
