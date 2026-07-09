@@ -117,6 +117,7 @@ touching the same lines, say so explicitly rather than bundling the fix in.
 - **Makefile as the single entry point**: A single `Makefile` is the entry point for every operation: `install`, `run`, `check`, `lint`, `docker`, `test`, and `clean`.
 - **GPG key handling via get_url + gpg --dearmor, not apt_key**: `roles/repo_packages/tasks/install.yml` downloads each vendor's key with `ansible.builtin.get_url`, dearmoring it first when the vendor publishes an ASCII-armored key.
 - **Consolidated, parameterized Dockerfile for test images**: A single `Dockerfile`, parameterized by build args (`UBUNTU_VERSION` default `24.04`, `INSTALL_NVIM` default `false`), replaces three separate Dockerfiles pinned to EOL `focal`.
+- **CI runs static checks only, not a full playbook execution**: `.github/workflows/ci.yml` installs `ansible`, `ansible-lint`, and `yamllint`, then runs `yamllint .`, `ansible-lint`, and `ansible-playbook --syntax-check ubuntu.yml` — static analysis and syntax verification only.
 
 ## Session handoff
 
