@@ -100,7 +100,7 @@ repo_packages:
     gpg_key_url: "https://updates.signal.org/desktop/apt/keys.asc"
     armored: true
     repo: "https://updates.signal.org/desktop/apt"
-    build: stable
+    build: xenial
     branch: main
   - name: brave-browser
     gpg_key_url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
