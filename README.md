@@ -23,7 +23,7 @@ Running the playbook on a bare Ubuntu machine installs and configures everything
 On a fresh machine with no Ansible installed:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Japenner/ansible/master/ansible-run | bash
+curl -fsSL https://raw.githubusercontent.com/Japenner/ansible/main/ansible-run | bash
 ```
 
 This installs Ansible via the official PPA, then runs `ansible-pull` to clone the repo and execute `ubuntu.yml`.
