@@ -67,10 +67,6 @@ zsh_plugins:
   - name: zsh-syntax-highlighting
     repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
 
-zsh_themes:
-  - name: powerlevel10k
-    repo: "https://github.com/romkatv/powerlevel10k.git"
-
 project_repos:
   - anki
   - jacobs_toolbox

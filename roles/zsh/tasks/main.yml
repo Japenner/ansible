@@ -31,13 +31,3 @@
     version: master
   loop: "{{ zsh_plugins }}"
   tags: zsh
-
-- name: Clone ZSH themes
-  become: true
-  become_user: "{{ user }}"
-  ansible.builtin.git:
-    repo: "{{ item.repo }}"
-    dest: "/home/{{ user }}/.oh-my-zsh/custom/themes/{{ item.name }}"
-    version: master
-  loop: "{{ zsh_themes }}"
-  tags: zsh
