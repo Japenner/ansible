@@ -8,7 +8,7 @@ Running the playbook on a bare Ubuntu machine installs and configures everything
 
 ## Prerequisites
 
-- Ubuntu 22.04+
+- Ubuntu 22.04+ on amd64 (see [Known Limitations](#known-limitations) for other architectures)
 - `sudo` access
 - `make` and `git`
 - SSH private key committed (vault-encrypted) at `.ssh/id_ed25519`, copied to `~/.ssh/` by the playbook
@@ -102,6 +102,14 @@ Tasks that decrypt secrets need a vault password at run time:
 ```bash
 docker run --rm -e TAGS="--ask-vault-pass" -it new-computer
 ```
+
+## Known Limitations
+
+- **Non-amd64 hosts aren't fully supported yet.** `mise` and `repo_packages` hardcode `arch=amd64` in their apt source lines (unlike `docker`'s role, which derives the arch correctly), so package installs there fail on arm64 ([#16](https://github.com/Japenner/ansible/issues/16)).
+- **The `signal-desktop` repo entry has the wrong apt suite** (`stable` instead of `xenial`), so it currently fails with "does not have a Release file" ([#15](https://github.com/Japenner/ansible/issues/15)).
+- **The one-line curl bootstrap doesn't handle the vault password** — see the note under [Bootstrap from scratch](#bootstrap-from-scratch) ([#13](https://github.com/Japenner/ansible/issues/13)).
+
+See the [open issues](https://github.com/Japenner/ansible/issues) for the full cleanup/modernization backlog.
 
 ## Teardown
 
