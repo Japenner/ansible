@@ -60,10 +60,22 @@
         groups: docker
         append: true
 
+- name: Determine dpkg architecture
+  become: true
+  ansible.builtin.command:
+    cmd: dpkg --print-architecture
+  register: dpkg_arch
+  changed_when: false
+  tags: lazydocker
+
 - name: Download Lazydocker
   become: true
+  vars:
+    lazydocker_arch_map:
+      amd64: x86_64
+      arm64: arm64
   ansible.builtin.get_url:
-    url: "https://github.com/jesseduffield/lazydocker/releases/download/v0.23.3/lazydocker_0.23.3_Linux_x86_64.tar.gz"
+    url: "https://github.com/jesseduffield/lazydocker/releases/download/v0.23.3/lazydocker_0.23.3_Linux_{{ lazydocker_arch_map[dpkg_arch.stdout] }}.tar.gz"
     dest: /tmp/lazydocker.tar.gz
     mode: "0644"
   register: lazydocker_download

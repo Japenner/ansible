@@ -22,9 +22,15 @@
         cmd: gpg --dearmor -o /etc/apt/keyrings/mise-archive-keyring.gpg /tmp/mise-key.asc
         creates: /etc/apt/keyrings/mise-archive-keyring.gpg
 
+    - name: Determine dpkg architecture
+      ansible.builtin.command:
+        cmd: dpkg --print-architecture
+      register: dpkg_arch
+      changed_when: false
+
     - name: Add mise apt repository
       ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main"
+        repo: "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch={{ dpkg_arch.stdout }}] https://mise.jdx.dev/deb stable main"
         filename: mise
         state: present
         update_cache: true
