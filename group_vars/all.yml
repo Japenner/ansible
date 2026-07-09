@@ -41,7 +41,6 @@ apt_packages:
     - xclip
     - tldr
     - ripgrep
-    - code
     - shutter
     - gh
 
@@ -107,5 +106,11 @@ repo_packages:
     gpg_key_url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
     armored: false
     repo: "https://brave-browser-apt-release.s3.brave.com/"
+    build: stable
+    branch: main
+  - name: code
+    gpg_key_url: "https://packages.microsoft.com/keys/microsoft.asc"
+    armored: true
+    repo: "https://packages.microsoft.com/repos/code"
     build: stable
     branch: main
