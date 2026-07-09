@@ -79,7 +79,7 @@ isolated container, not a real machine.
   Don't conflate them when adding a new app — pick based on whether the
   vendor publishes an apt repo or just `.deb` release assets.
 
-## Known gaps (see TODO.md and open GitHub issues for the full backlog)
+## Known gaps (see open GitHub issues for the full backlog)
 
 - `mise` and `repo_packages` hardcode `arch=amd64` in their apt source lines
   instead of deriving it like `docker`'s role does — breaks on non-amd64
