@@ -116,6 +116,7 @@ touching the same lines, say so explicitly rather than bundling the fix in.
 - **FQCN module style enforced throughout**: All tasks use fully-qualified collection names — `ansible.builtin.*` for core modules and `ansible.posix.*` for the one module that needs it (`authorized_key`).
 - **Makefile as the single entry point**: A single `Makefile` is the entry point for every operation: `install`, `run`, `check`, `lint`, `docker`, `test`, and `clean`.
 - **GPG key handling via get_url + gpg --dearmor, not apt_key**: `roles/repo_packages/tasks/install.yml` downloads each vendor's key with `ansible.builtin.get_url`, dearmoring it first when the vendor publishes an ASCII-armored key.
+- **Consolidated, parameterized Dockerfile for test images**: A single `Dockerfile`, parameterized by build args (`UBUNTU_VERSION` default `24.04`, `INSTALL_NVIM` default `false`), replaces three separate Dockerfiles pinned to EOL `focal`.
 
 ## Session handoff
 
