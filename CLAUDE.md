@@ -112,6 +112,7 @@ touching the same lines, say so explicitly rather than bundling the fix in.
 - **Drop the community.general collection dependency**: The `git` role was deleted, and with it the only reason this repo depended on `community.general`.
 - **Dotfiles delegated to an external stow-managed repo**: The `dotfiles` role only clones `git@github.com:{{ github_account }}/.dotfiles.git` to `/home/{{ user }}/.dotfiles` and runs that repo's own `.local/bin/dotfiles/setup.zsh`, which performs the actual `stow` calls.
 - **mise replaces asdf as the language version manager**: Adopt `mise` (<https://mise.jdx.dev>) as the version manager, installed via its own signed apt repository (GPG key dearmored into `/etc/apt/keyrings/mise-archive-keyring.gpg`) rather than a git clone.
+- **Dual package-install mechanism — repo_packages vs deb_packages**: Two distinct data-driven mechanisms live in `group_vars/all.yml` and are handled by dedicated roles: `repo_packages` adds a signed apt repository for vendors that publish one; `deb_packages` downloads a specific `.deb` file by URL and installs it directly.
 
 ## Session handoff
 
