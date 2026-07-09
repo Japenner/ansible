@@ -27,9 +27,7 @@ On a fresh machine with no Ansible installed:
 curl -fsSL https://raw.githubusercontent.com/Japenner/ansible/main/ansible-run | bash
 ```
 
-This installs Ansible via the official PPA, then runs `ansible-pull` to clone the repo and execute `ubuntu.yml`.
-
-> **Known gap:** this one-liner doesn't pass a vault password, so it currently fails on the `ssh` role's vault-encrypted key copy ([#13](https://github.com/Japenner/ansible/issues/13)). Until that's fixed, clone the repo and use `make run` below instead, which prompts for the vault password interactively.
+This installs Ansible via the official PPA, then runs `ansible-pull --ask-vault-pass` to clone the repo and execute `ubuntu.yml`. You'll be prompted for the vault password before any role runs — the `ssh` role's vault-encrypted key copy needs it to succeed.
 
 ### Run locally
 
@@ -107,7 +105,6 @@ docker run --rm -e TAGS="--ask-vault-pass" -it new-computer
 
 - **Non-amd64 hosts aren't fully supported yet.** `mise` and `repo_packages` hardcode `arch=amd64` in their apt source lines (unlike `docker`'s role, which derives the arch correctly), so package installs there fail on arm64 ([#16](https://github.com/Japenner/ansible/issues/16)).
 - **The `signal-desktop` repo entry has the wrong apt suite** (`stable` instead of `xenial`), so it currently fails with "does not have a Release file" ([#15](https://github.com/Japenner/ansible/issues/15)).
-- **The one-line curl bootstrap doesn't handle the vault password** — see the note under [Bootstrap from scratch](#bootstrap-from-scratch) ([#13](https://github.com/Japenner/ansible/issues/13)).
 
 See the [open issues](https://github.com/Japenner/ansible/issues) for the full cleanup/modernization backlog.
 
