@@ -154,3 +154,7 @@ Purges packages, removes configs, and cleans up APT sources.
 ## Contributing
 
 Branch off `main`. GitHub Actions runs `yamllint`, `ansible-lint`, and `ansible-playbook --syntax-check` on every push and pull request — run `make lint` and `make check` locally before opening a PR. If your change touches a role's tasks, exercise it for real with `make test` (or `docker run --rm new-computer ansible-playbook --tags <role> ubuntu.yml` for a scoped run) rather than relying on syntax-check alone; CI doesn't currently run the playbook itself ([#20](https://github.com/Japenner/ansible/issues/20)).
+
+## License
+
+No license specified. This is a personal machine-provisioning setup, kept public for reference — not intended for reuse as-is.
