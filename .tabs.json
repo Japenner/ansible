@@ -1,0 +1,8 @@
+{
+  "name": "ansible",
+  "urls": [
+    "https://github.com/Japenner/ansible",
+    "https://github.com/Japenner/ansible/issues",
+    "https://github.com/Japenner/ansible/pulls"
+  ]
+}
