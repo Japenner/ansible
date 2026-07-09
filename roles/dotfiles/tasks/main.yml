@@ -17,7 +17,7 @@
 - name: Stow dotfiles
   become: true
   become_user: "{{ user }}"
-  ansible.builtin.command: ./bin/setup.zsh
+  ansible.builtin.command: ./.local/bin/dotfiles/setup.zsh
   args:
     chdir: "/home/{{ user }}/.dotfiles"
   changed_when: false

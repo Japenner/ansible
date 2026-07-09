@@ -68,7 +68,7 @@ Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `
 | Shell | ZSH, Oh-My-Zsh, powerlevel10k, zsh-autosuggestions, zsh-completions, zsh-syntax-highlighting |
 | Dev tools | mise (Ruby, Node.js, Python, Go), Docker CE + Lazydocker, GitHub CLI |
 | Fonts | FiraCode Nerd Font v3.2.1 |
-| Dotfiles | Cloned from `github.com/Japenner/.dotfiles`, applied via `bin/setup.zsh` |
+| Dotfiles | Cloned from `github.com/Japenner/.dotfiles`, applied via `.local/bin/dotfiles/setup.zsh` — including git config (identity, includeIf work/personal switching) via its own stow-managed `.gitconfig` |
 | Core packages | build-essential, cmake, clangd, ripgrep, fzf, tmux, picom, stow, and more |
 | Desktop apps | Brave Browser, Slack, Signal, Discord, Obsidian, RustDesk |
 | Personal repos | Cloned or updated under `~/repos/personal/` |
