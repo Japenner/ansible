@@ -42,7 +42,7 @@ make run       # provision this machine
 Run `make` (or `make help`) to list all targets:
 
 | Target | What it does |
-|---|---|
+| --- | --- |
 | `make install` | Install Ansible via the official PPA |
 | `make run` | Provision this machine (prompts for vault + sudo passwords) |
 | `make check` | Syntax-check the playbook |
@@ -64,7 +64,7 @@ Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `
 ## What Gets Installed
 
 | Category | Details |
-|---|---|
+| --- | --- |
 | Shell | ZSH, Oh-My-Zsh, zsh-autosuggestions, zsh-completions, zsh-syntax-highlighting |
 | Dev tools | mise (Ruby, Node.js, Python, Go), Docker CE + Lazydocker, GitHub CLI |
 | Fonts | FiraCode Nerd Font v3.2.1 |
@@ -90,6 +90,7 @@ make test    # builds the image, then syntax-checks inside it
 ```
 
 `make docker` builds two tags from the single `Dockerfile`:
+
 - `new-computer` — general desktop setup
 - `nvim-computer` — adds Neovim (`--build-arg INSTALL_NVIM=true`)
 
@@ -111,7 +112,7 @@ Purges packages, removes configs, and cleans up APT sources.
 
 ## Project Structure
 
-```
+```text
 .
 ├── ubuntu.yml              # Play — lists the roles to run, in order
 ├── ansible.cfg             # Ansible config (interpreter, inventory, roles_path)
