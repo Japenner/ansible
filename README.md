@@ -13,6 +13,7 @@ Running the playbook on a bare Ubuntu machine installs and configures everything
 - `make` and `git`
 - SSH private key committed (vault-encrypted) at `.ssh/id_ed25519`, copied to `~/.ssh/` by the playbook
 - The Ansible vault password — needed to decrypt the SSH key at provision time
+- The `ansible.posix` collection (for `authorized_key`). Installing `ansible` via `make install`'s PPA pulls in the full community bundle, which includes it; a bare `ansible-core` install won't have it
 
 > `auth_codes/` holds additional vault-encrypted secrets (API keys, tokens). They are an encrypted store kept alongside the repo; the playbook itself does not consume them.
 
