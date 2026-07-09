@@ -110,6 +110,7 @@ touching the same lines, say so explicitly rather than bundling the fix in.
 - **Centralized data in group_vars/all.yml**: All such data lives in `group_vars/all.yml` (package lists per category, `mise_global_tools`, `zsh_plugins`, `project_repos`, `deb_packages`, `repo_packages`, etc.).
 - **Per-role tags convention**: Every task carries a `tags:` entry matching its role name (see `ubuntu.yml` and the README's tag list), so a single concern can be provisioned in isolation with `ansible-playbook --tags zsh ubuntu.yml`.
 - **Drop the community.general collection dependency**: The `git` role was deleted, and with it the only reason this repo depended on `community.general`.
+- **Dotfiles delegated to an external stow-managed repo**: The `dotfiles` role only clones `git@github.com:{{ github_account }}/.dotfiles.git` to `/home/{{ user }}/.dotfiles` and runs that repo's own `.local/bin/dotfiles/setup.zsh`, which performs the actual `stow` calls.
 
 ## Session handoff
 
