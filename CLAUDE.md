@@ -103,6 +103,10 @@ touching the same lines, say so explicitly rather than bundling the fix in.
   say so explicitly.
 - When uncertain about scope or approach, ask before proceeding.
 
+## Key Decisions
+
+- **Single-host, local-connection execution model**: The playbook (`ubuntu.yml`) targets `hosts: localhost` with `ansible_connection=local`, and `ansible.cfg` points `inventory` at a single-entry `inventory.ini`.
+
 ## Session handoff
 
 Generated 2026-07-09.
