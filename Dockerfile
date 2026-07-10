@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TAGS=""
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y software-properties-common sudo curl git build-essential && \
+    apt-get install -y software-properties-common sudo curl git build-essential unzip fontconfig && \
     apt-add-repository -y ppa:ansible/ansible && \
     apt-get update && apt-get install -y ansible && \
     apt-get clean && rm -rf /var/lib/apt/lists/*

@@ -27,6 +27,16 @@
         state: present
         update_cache: true
 
+- name: Use precompiled Ruby binaries instead of building from source
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.command:
+    cmd: mise settings ruby.compile=false
+  changed_when: true
+  tags:
+    - asdf
+    - mise
+
 - name: Install and set global language versions with mise
   become: true
   become_user: "{{ user }}"

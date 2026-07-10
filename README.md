@@ -76,7 +76,7 @@ Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `
 
 ## Development / Testing
 
-`ansible-lint`, `yamllint`, and a `--syntax-check` run on every push and pull request via GitHub Actions (`.github/workflows/ci.yml`). Run the same checks locally:
+`ansible-lint`, `yamllint`, and a `--syntax-check` run on every push and pull request via GitHub Actions (`.github/workflows/ci.yml`). A second job builds the `new-computer` test image and actually runs the playbook inside it, scoped to `--tags core,font,zsh,mise` — the subset that needs neither a vault password nor SSH access. `ssh`, `dotfiles`, and `personal_projects` are excluded from CI for that reason and are only exercised locally; `docker` is also excluded because starting the dockerd service needs a privileged container ([#33](https://github.com/Japenner/ansible/issues/33)); `deb_packages` and `repo_packages` are excluded because several pinned versions (rustdesk, brave-browser) hit real dependency conflicts on Ubuntu 24.04, tracked by [#34](https://github.com/Japenner/ansible/issues/34) rather than this job. Run the same checks locally:
 
 ```bash
 make check   # syntax check (no extra tooling needed)
@@ -158,7 +158,7 @@ Purges packages, removes configs, and cleans up APT sources.
 
 ## Contributing
 
-Branch off `main`. GitHub Actions runs `yamllint`, `ansible-lint`, and `ansible-playbook --syntax-check` on every push and pull request — run `make lint` and `make check` locally before opening a PR. If your change touches a role's tasks, exercise it for real with `make test` (or `docker run --rm new-computer ansible-playbook --tags <role> ubuntu.yml` for a scoped run) rather than relying on syntax-check alone; CI doesn't currently run the playbook itself ([#20](https://github.com/Japenner/ansible/issues/20)).
+Branch off `main`. GitHub Actions runs `yamllint`, `ansible-lint`, `ansible-playbook --syntax-check`, and a real containerized run of the playbook (scoped to the safe tags listed above) on every push and pull request — run `make lint` and `make check` locally before opening a PR. If your change touches a role outside that safe tag set (`ssh`, `dotfiles`, `personal_projects`, `docker`, `deb_packages`, `repo_packages`), exercise it locally with `docker run --rm -e TAGS="--ask-vault-pass --tags <role>" -it new-computer` since CI can't run it.
 
 ## License
 
