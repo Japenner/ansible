@@ -83,6 +83,14 @@ make check   # syntax check (no extra tooling needed)
 make lint    # ansible-lint + yamllint (must be installed)
 ```
 
+### Tooling versions
+
+CI installs `ansible`, `ansible-lint`, and `yamllint` from `requirements-dev.txt`, which pins each to an exact version (currently `ansible-core` 2.18.x, via `ansible==11.9.0`). This is deliberate: unpinned tooling can change lint/CI behavior on any run with no corresponding code change, making failures hard to bisect.
+
+`make install` pulls Ansible from `ppa:ansible/ansible` (Ubuntu's PPA, not pip) and doesn't pin an exact version — it should stay within the same `ansible-core` 2.18.x range as `requirements-dev.txt` so local and CI runs don't drift apart. If the PPA's current release moves to a different major/minor, bump `requirements-dev.txt` to match rather than letting the two diverge silently.
+
+To bump these pins deliberately: update the versions in `requirements-dev.txt` in their own commit, run `make check` and `make lint` locally against the new versions, and update the `ansible-core` range noted above if it changed.
+
 A Docker image lets you exercise the playbook without a real machine:
 
 ```bash
