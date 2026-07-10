@@ -13,7 +13,7 @@ Running the playbook on a bare Ubuntu machine installs and configures everything
 - `make` and `git`
 - SSH private key committed (vault-encrypted) at `.ssh/id_ed25519`, copied to `~/.ssh/` by the playbook
 - The Ansible vault password — needed to decrypt the SSH key at provision time
-- The `ansible.posix` collection (for `authorized_key`). Installing `ansible` via `make install`'s PPA pulls in the full community bundle, which includes it; a bare `ansible-core` install won't have it
+- The `ansible.posix` collection (for `authorized_key`), declared in `requirements.yml` and installed by `make install` via `ansible-galaxy collection install -r requirements.yml`
 
 > `auth_codes/` holds additional vault-encrypted secrets (API keys, tokens). They are an encrypted store kept alongside the repo; the playbook itself does not consume them.
 
@@ -34,7 +34,7 @@ This installs Ansible via the official PPA, then runs `ansible-pull --ask-vault-
 With the repo cloned:
 
 ```bash
-make install   # install Ansible via the official PPA (Ubuntu)
+make install   # install Ansible via the official PPA (Ubuntu) and required collections
 make run       # provision this machine
 ```
 
@@ -44,7 +44,7 @@ Run `make` (or `make help`) to list all targets:
 
 | Target | What it does |
 | --- | --- |
-| `make install` | Install Ansible via the official PPA |
+| `make install` | Install Ansible via the official PPA and collections from `requirements.yml` |
 | `make run` | Provision this machine (prompts for vault + sudo passwords) |
 | `make check` | Syntax-check the playbook |
 | `make lint` | Run `ansible-lint` and `yamllint` |
