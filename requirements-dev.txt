@@ -1,0 +1,7 @@
+# Tooling versions used by CI and `make install`/`make lint`.
+# Pinned exactly (not a range) so lint/CI behavior only changes when this
+# file changes — bump deliberately, in its own commit, after confirming
+# `make check` and `make lint` still pass with the new versions.
+ansible==11.9.0
+ansible-lint==25.11.0
+yamllint==1.37.1
