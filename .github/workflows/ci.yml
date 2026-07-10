@@ -43,10 +43,8 @@ jobs:
       # run in CI. `ssh`, `dotfiles`, and `personal_projects` all require a
       # decrypted deploy key (vault) and/or `git clone` over SSH to
       # github.com, neither of which this repo hands to CI. `deb_packages`
-      # (`install`) and `repo_packages` (`repo`) are excluded too: several
-      # pinned versions (rustdesk, brave-browser) hit real dependency
-      # conflicts on Ubuntu 24.04, tracked separately by #34 rather than
-      # fixed here.
+      # (`install`) and `repo_packages` (`repo`) install cleanly on Ubuntu
+      # 24.04 (verified in #34) and need neither, so they run here too.
       #
       # `docker` needs `--privileged`: starting the dockerd service via
       # sysvinit calls `ulimit` in ways plain (non-privileged) containers
@@ -59,4 +57,4 @@ jobs:
       - name: Run playbook inside container
         run: >
           docker run --rm --privileged new-computer
-          ansible-playbook --tags core,font,zsh,mise,docker ubuntu.yml
+          ansible-playbook --tags core,font,zsh,mise,docker,install,repo ubuntu.yml
