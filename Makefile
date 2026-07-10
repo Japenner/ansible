@@ -7,10 +7,11 @@ help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 	  awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-9s\033[0m %s\n", $$1, $$2}'
 
-install: ## Install Ansible via the official PPA (Ubuntu)
+install: ## Install Ansible via the official PPA (Ubuntu) and required collections
 	sudo apt-add-repository -y ppa:ansible/ansible
 	sudo apt-get update -y
 	sudo apt-get install -y ansible
+	ansible-galaxy collection install -r requirements.yml
 
 run: ## Provision this machine (prompts for vault + sudo passwords)
 	ansible-playbook --ask-vault-pass --ask-become-pass $(PLAYBOOK)
