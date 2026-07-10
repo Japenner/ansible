@@ -11,7 +11,7 @@
 
 - name: Download Fira Code Mono Nerd Font
   ansible.builtin.get_url:
-    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraCode.zip"
+    url: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/FiraCode.zip"
     dest: /tmp/FiraCode.zip
     mode: "0644"
   tags: font
