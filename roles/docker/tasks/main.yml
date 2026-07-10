@@ -75,7 +75,7 @@
       amd64: x86_64
       arm64: arm64
   ansible.builtin.get_url:
-    url: "https://github.com/jesseduffield/lazydocker/releases/download/v0.23.3/lazydocker_0.23.3_Linux_{{ lazydocker_arch_map[dpkg_arch.stdout] }}.tar.gz"
+    url: "https://github.com/jesseduffield/lazydocker/releases/download/v0.25.2/lazydocker_0.25.2_Linux_{{ lazydocker_arch_map[dpkg_arch.stdout] }}.tar.gz"
     dest: /tmp/lazydocker.tar.gz
     mode: "0644"
   register: lazydocker_download
