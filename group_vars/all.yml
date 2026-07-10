@@ -24,6 +24,7 @@ apt_packages:
     - ccache
     - ninja-build
     - python3-pip
+    - python3-debian
     - dconf-editor
     - moreutils
     - clangd
@@ -92,25 +93,21 @@ deb_packages:
 repo_packages:
   - name: slack
     gpg_key_url: "https://packagecloud.io/slacktechnologies/slack/gpgkey"
-    armored: true
-    repo: "https://packagecloud.io/slacktechnologies/slack/debian/"
-    build: jessie
-    branch: main
+    uris: "https://packagecloud.io/slacktechnologies/slack/debian/"
+    suites: jessie
+    components: main
   - name: signal-desktop
     gpg_key_url: "https://updates.signal.org/desktop/apt/keys.asc"
-    armored: true
-    repo: "https://updates.signal.org/desktop/apt"
-    build: xenial
-    branch: main
+    uris: "https://updates.signal.org/desktop/apt"
+    suites: xenial
+    components: main
   - name: brave-browser
     gpg_key_url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
-    armored: false
-    repo: "https://brave-browser-apt-release.s3.brave.com/"
-    build: stable
-    branch: main
+    uris: "https://brave-browser-apt-release.s3.brave.com/"
+    suites: stable
+    components: main
   - name: code
     gpg_key_url: "https://packages.microsoft.com/keys/microsoft.asc"
-    armored: true
-    repo: "https://packages.microsoft.com/repos/code"
-    build: stable
-    branch: main
+    uris: "https://packages.microsoft.com/repos/code"
+    suites: stable
+    components: main
