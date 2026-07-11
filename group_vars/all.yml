@@ -87,3 +87,8 @@ repo_packages:
     uris: "https://packages.microsoft.com/repos/code"
     suites: stable
     components: main
+  - name: google-chrome-stable
+    gpg_key_url: "https://dl.google.com/linux/linux_signing_key.pub"
+    uris: "https://dl.google.com/linux/chrome/deb/"
+    suites: stable
+    components: main
