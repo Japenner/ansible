@@ -70,7 +70,6 @@ deb_packages:
     version: "1.12.7"
     arch: amd64
 
-# armored: true keys are ASCII-armored and must be dearmored before apt can use them.
 repo_packages:
   - name: slack
     gpg_key_url: "https://packagecloud.io/slacktechnologies/slack/gpgkey"

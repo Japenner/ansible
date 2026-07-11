@@ -1,7 +1,7 @@
 # ADR-0011: GPG key handling via get_url + gpg --dearmor, not apt_key
 
 **Date:** 2026-07-09
-**Status:** accepted
+**Status:** amended — see Update below
 
 ## Context
 
@@ -30,3 +30,14 @@ publishes, and the playbook has no dependency on the deprecated `apt_key`
 module. The tradeoff is one extra per-vendor flag (`armored`) that must be
 set correctly in `group_vars/all.yml` when onboarding a new repo-based app —
 getting it wrong reproduces the exact bug this decision fixed.
+
+## Update (2026-07-11)
+
+PR #28 (issue #17) migrated `repo_packages` from `apt_repository` + this
+manual `get_url`/`gpg --dearmor` dance to `ansible.builtin.deb822_repository`,
+which fetches and converts the key itself via `signed_by: {{ item.gpg_key_url
+}}`. The `armored` flag and the manual dearmor step no longer exist for
+`repo_packages`; `group_vars/all.yml` entries just set `gpg_key_url` and let
+the module handle the rest. The `docker` role isn't on `deb822_repository`
+and still does its own manual `get_url` + `gpg --dearmor` exactly as
+described above — the original decision stands there unchanged.
