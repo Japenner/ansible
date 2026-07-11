@@ -9,25 +9,15 @@ personal: "/home/{{ user }}/repos/personal"
 apt_packages:
   core:
     - build-essential
-    - cmake
-    - pkg-config
-    - libpthread-stubs0-dev
-    - lua5.1
     - unzip
-    - libtool
-    - libtool-bin
-    - gettext
-    - picom
     - curl
     - htop
     - lsof
     - ccache
-    - ninja-build
     - python3-pip
     - python3-debian
     - dconf-editor
     - moreutils
-    - clangd
     - openssl
     - gnupg
     - libpq-dev
@@ -37,7 +27,6 @@ apt_packages:
     - software-properties-common
   productivity:
     - tmux
-    - wireshark
     - fzf
     - xclip
     - tldr
@@ -58,14 +47,6 @@ mise_global_tools:
   - node@latest
   - python@latest
   - go@latest
-
-zsh_plugins:
-  - name: zsh-autosuggestions
-    repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
-  - name: zsh-completions
-    repo: "https://github.com/zsh-users/zsh-completions.git"
-  - name: zsh-syntax-highlighting
-    repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
 
 project_repos:
   - anki
@@ -100,11 +81,6 @@ repo_packages:
     gpg_key_url: "https://updates.signal.org/desktop/apt/keys.asc"
     uris: "https://updates.signal.org/desktop/apt"
     suites: xenial
-    components: main
-  - name: brave-browser
-    gpg_key_url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
-    uris: "https://brave-browser-apt-release.s3.brave.com/"
-    suites: stable
     components: main
   - name: code
     gpg_key_url: "https://packages.microsoft.com/keys/microsoft.asc"

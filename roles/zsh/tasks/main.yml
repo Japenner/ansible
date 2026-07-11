@@ -37,13 +37,3 @@
     state: absent
   when: zshrc_stat.stat.exists and not zshrc_stat.stat.islnk
   tags: zsh
-
-- name: Clone ZSH plugins
-  become: true
-  become_user: "{{ user }}"
-  ansible.builtin.git:
-    repo: "{{ item.repo }}"
-    dest: "/home/{{ user }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
-    version: master
-  loop: "{{ zsh_plugins }}"
-  tags: zsh
