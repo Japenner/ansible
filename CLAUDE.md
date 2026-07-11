@@ -33,9 +33,11 @@ a library or a project soliciting outside contributions.
   execution) and `make test`/`make docker` (builds the `new-computer` /
   `nvim-computer` Docker images from the repo's own `Dockerfile` and can
   actually run the playbook inside a container). CI
-  (`.github/workflows/ci.yml`) currently only does the first tier — it does
-  not run the playbook. Don't assume CI passing means the playbook actually
-  works; verify with a Docker run for anything touching role logic.
+  (`.github/workflows/ci.yml`) runs both: a `lint` job for the static tier,
+  and a `provision` job that builds `new-computer` and runs the playbook
+  inside it with `--tags core,font,zsh,mise,docker,install,repo`. `ssh`,
+  `dotfiles`, and `personal_projects` still can't run in CI (need a vault
+  password / SSH deploy key) — verify those locally with a Docker run.
 
 ## Execution boundary
 
@@ -118,9 +120,9 @@ them or fix them as a side effect of unrelated work without asking first.
 - **Makefile as the single entry point**: A single `Makefile` is the entry point for every operation: `install`, `run`, `check`, `lint`, `docker`, `test`, and `clean`.
 - **GPG key handling via get_url + gpg --dearmor, not apt_key**: `roles/repo_packages/tasks/install.yml` downloads each vendor's key with `ansible.builtin.get_url`, dearmoring it first when the vendor publishes an ASCII-armored key.
 - **Consolidated, parameterized Dockerfile for test images**: A single `Dockerfile`, parameterized by build args (`UBUNTU_VERSION` default `24.04`, `INSTALL_NVIM` default `false`), replaces three separate Dockerfiles pinned to EOL `focal`.
-- **CI runs static checks only, not a full playbook execution**: `.github/workflows/ci.yml` installs `ansible`, `ansible-lint`, and `yamllint`, then runs `yamllint .`, `ansible-lint`, and `ansible-playbook --syntax-check ubuntu.yml` — static analysis and syntax verification only.
+- **CI runs both static checks and a real playbook execution**: `.github/workflows/ci.yml` has a `lint` job (`yamllint`, `ansible-lint`, `shellcheck`, `--syntax-check`) and a `provision` job that builds the `new-computer` Docker image and runs `ansible-playbook` inside it with `--tags core,font,zsh,mise,docker,install,repo` — the subset that needs neither a vault password nor SSH access.
 - **Secrets are committed to the repo only ansible-vault encrypted**: Every secret-bearing file (`.ssh/id_ed25519*`, everything under `auth_codes/`) is committed only after being encrypted with `ansible-vault`.
-- **Two-tier testing strategy — static checks vs. execution**: Testing is split into `make check`/`make lint` (syntax + lint, no execution) and `make test`/`make docker` (builds and runs the playbook inside a container); CI currently wires up only the first tier.
+- **Two-tier testing strategy — static checks vs. execution**: Testing is split into `make check`/`make lint` (syntax + lint, no execution) and `make test`/`make docker` (builds and runs the playbook inside a container); CI wires up both tiers via its `lint` and `provision` jobs.
 
 ## Session handoff
 
