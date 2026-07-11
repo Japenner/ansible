@@ -10,7 +10,6 @@
     accept_hostkey: true
     version: master
   tags:
-    - install
     - dotfiles
     - stow
 
@@ -22,6 +21,5 @@
     chdir: "/home/{{ user }}/.dotfiles"
   changed_when: false
   tags:
-    - install
     - dotfiles
     - stow
