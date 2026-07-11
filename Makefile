@@ -19,9 +19,10 @@ run: ## Provision this machine (prompts for vault + sudo passwords)
 check: ## Syntax-check the playbook
 	ansible-playbook --syntax-check $(PLAYBOOK)
 
-lint: ## Run ansible-lint and yamllint (must be installed)
+lint: ## Run ansible-lint, yamllint, and shellcheck (must be installed)
 	ansible-lint
 	yamllint .
+	shellcheck ansible-run build-dockers clean-env
 
 docker: ## Build the Docker test images
 	./build-dockers

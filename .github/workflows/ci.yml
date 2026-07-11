@@ -28,6 +28,9 @@ jobs:
       - name: ansible-lint
         run: ansible-lint
 
+      - name: shellcheck
+        run: shellcheck ansible-run build-dockers clean-env
+
       - name: Syntax check
         run: ansible-playbook --syntax-check ubuntu.yml
 
