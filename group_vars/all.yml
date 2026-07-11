@@ -9,25 +9,15 @@ personal: "/home/{{ user }}/repos/personal"
 apt_packages:
   core:
     - build-essential
-    - cmake
-    - pkg-config
-    - libpthread-stubs0-dev
-    - lua5.1
     - unzip
-    - libtool
-    - libtool-bin
-    - gettext
-    - picom
     - curl
     - htop
     - lsof
     - ccache
-    - ninja-build
     - python3-pip
     - python3-debian
     - dconf-editor
     - moreutils
-    - clangd
     - openssl
     - gnupg
     - libpq-dev
