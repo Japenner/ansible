@@ -68,7 +68,7 @@ Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `
 | --- | --- |
 | Shell | ZSH, Oh-My-Zsh (plugins installed by the dotfiles repo's own setup script) |
 | Dev tools | mise (Ruby, Node.js, Python, Go), Docker CE + Lazydocker, GitHub CLI |
-| Fonts | FiraCode Nerd Font v3.2.1 |
+| Fonts | FiraCode Nerd Font v3.4.0 |
 | Dotfiles | Cloned from `github.com/Japenner/.dotfiles`, applied via `.local/bin/dotfiles/setup.zsh` — including git config (identity, includeIf work/personal switching) via its own stow-managed `.gitconfig` |
 | Core packages | build-essential, ripgrep, fzf, tmux, stow, and more |
 | Desktop apps | Slack, Signal, Discord, Obsidian, RustDesk |
@@ -111,8 +111,7 @@ docker run --rm -e TAGS="--ask-vault-pass" -it new-computer
 
 ## Known Limitations
 
-- **Non-amd64 hosts aren't fully supported yet.** `mise` and `repo_packages` hardcode `arch=amd64` in their apt source lines (unlike `docker`'s role, which derives the arch correctly), so package installs there fail on arm64 ([#16](https://github.com/Japenner/ansible/issues/16)).
-- **The `signal-desktop` repo entry has the wrong apt suite** (`stable` instead of `xenial`), so it currently fails with "does not have a Release file" ([#15](https://github.com/Japenner/ansible/issues/15)).
+- **Non-amd64 hosts aren't fully supported.** `mise`, `repo_packages`, and `docker` all derive the apt architecture dynamically via `dpkg --print-architecture`, but `deb_packages` (RustDesk, Discord, Obsidian) downloads a specific pinned `.deb` URL per app in `group_vars/all.yml`, and those URLs are amd64-only. This is an accepted tradeoff for a single amd64 desktop, not a bug.
 
 See the [open issues](https://github.com/Japenner/ansible/issues) for the full cleanup/modernization backlog.
 
