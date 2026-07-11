@@ -66,7 +66,7 @@ Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `
 
 | Category | Details |
 | --- | --- |
-| Shell | ZSH, Oh-My-Zsh, zsh-autosuggestions, zsh-completions, zsh-syntax-highlighting |
+| Shell | ZSH, Oh-My-Zsh (plugins installed by the dotfiles repo's own setup script) |
 | Dev tools | mise (Ruby, Node.js, Python, Go), Docker CE + Lazydocker, GitHub CLI |
 | Fonts | FiraCode Nerd Font v3.2.1 |
 | Dotfiles | Cloned from `github.com/Japenner/.dotfiles`, applied via `.local/bin/dotfiles/setup.zsh` — including git config (identity, includeIf work/personal switching) via its own stow-managed `.gitconfig` |
