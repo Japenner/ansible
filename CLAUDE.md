@@ -81,17 +81,18 @@ isolated container, not a real machine.
 
 ## Known gaps (see open GitHub issues for the full backlog)
 
-- `mise` and `repo_packages` hardcode `arch=amd64` in their apt source lines
-  instead of deriving it like `docker`'s role does — breaks on non-amd64
-  hosts (issue #16).
-- The `signal-desktop` `repo_packages` entry has the wrong apt suite
-  (`stable` instead of `xenial`) — issue #15.
-- The one-line `curl | bash` bootstrap (`ansible-run`) doesn't supply a vault
-  password, so it currently fails on the `ssh` role — issue #13.
+- `ssh`, `dotfiles`, and `personal_projects` tags are permanently excluded
+  from CI's `provision` job — they need a vault password and an SSH deploy
+  key that this repo doesn't hand to Actions. This is an accepted tradeoff
+  (trading that coverage for not putting secrets in a public repo's CI), not
+  a bug.
+- `deb_packages` entries (rustdesk, discord, obsidian) hardcode `arch` in
+  `group_vars/all.yml` instead of deriving it via `dpkg --print-architecture`
+  the way `repo_packages` and `docker` now do. Harmless on a single amd64
+  desktop; only matters if this ever runs on non-amd64.
 
-Don't silently "fix" these as a side effect of unrelated work — they're
-tracked issues with their own acceptance criteria. If a task requires
-touching the same lines, say so explicitly rather than bundling the fix in.
+These are accepted tradeoffs, not tracked issues — don't file work against
+them or fix them as a side effect of unrelated work without asking first.
 
 ## Output shape
 
