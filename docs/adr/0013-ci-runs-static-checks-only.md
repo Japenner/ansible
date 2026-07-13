@@ -1,7 +1,7 @@
 # ADR-0013: CI runs static checks only, not a full playbook execution
 
 **Date:** 2026-07-09
-**Status:** accepted
+**Status:** amended — see Update below
 
 ## Context
 
@@ -29,3 +29,14 @@ green CI run only proves the playbook is syntactically valid and lint-clean
 behavior must still be verified locally via `make test`/`make docker`
 before being trusted; CLAUDE.md's testing guidance calls this out explicitly
 so it isn't assumed away by "CI is green."
+
+## Update (2026-07-11)
+
+PR #32 (issue #20) added a `provision` job to `.github/workflows/ci.yml`
+that builds the `new-computer` Docker image and runs `ansible-playbook`
+inside it (`--privileged`, for dockerd) with `--tags
+core,font,zsh,mise,docker,install,repo` — the subset needing neither a vault
+password nor SSH access. The "static checks only" framing above no longer
+holds: CI now covers both tiers described in ADR-0015. Only `ssh`,
+`dotfiles`, and `personal_projects` still require a local/Docker run to
+verify, since they need secrets this repo doesn't hand to Actions.

@@ -68,7 +68,7 @@ Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `
 | --- | --- |
 | Shell | ZSH, Oh-My-Zsh (plugins installed by the dotfiles repo's own setup script) |
 | Dev tools | mise (Ruby, Node.js, Python, Go), Docker CE + Lazydocker, GitHub CLI |
-| Fonts | FiraCode Nerd Font v3.2.1 |
+| Fonts | FiraCode Nerd Font v3.4.0 |
 | Dotfiles | Cloned from `github.com/Japenner/.dotfiles`, applied via `.local/bin/dotfiles/setup.zsh` — including git config (identity, includeIf work/personal switching) via its own stow-managed `.gitconfig` |
 | Core packages | build-essential, ripgrep, fzf, tmux, stow, and more |
 | Desktop apps | Slack, Signal, Discord, Obsidian, RustDesk, Google Chrome |
@@ -76,7 +76,7 @@ Available tags: `ssh`, `font`, `core`, `productivity`, `docker`, `lazydocker`, `
 
 ## Development / Testing
 
-`ansible-lint`, `yamllint`, and a `--syntax-check` run on every push and pull request via GitHub Actions (`.github/workflows/ci.yml`). A second job builds the `new-computer` test image and actually runs the playbook inside it, scoped to `--tags core,font,zsh,mise` — the subset that needs neither a vault password nor SSH access. `ssh`, `dotfiles`, and `personal_projects` are excluded from CI for that reason and are only exercised locally; `docker` is also excluded because starting the dockerd service needs a privileged container ([#33](https://github.com/Japenner/ansible/issues/33)); `deb_packages` and `repo_packages` are excluded because several pinned versions (rustdesk, brave-browser) hit real dependency conflicts on Ubuntu 24.04, tracked by [#34](https://github.com/Japenner/ansible/issues/34) rather than this job. Run the same checks locally:
+`ansible-lint`, `yamllint`, `shellcheck`, and a `--syntax-check` run on every push and pull request via GitHub Actions (`.github/workflows/ci.yml`). A second (`provision`) job builds the `new-computer` test image and actually runs the playbook inside it (`--privileged`, since starting the dockerd service needs it), scoped to `--tags core,font,zsh,mise,docker,install,repo` — the subset that needs neither a vault password nor SSH access. `ssh`, `dotfiles`, and `personal_projects` are excluded from CI for that reason and are only exercised locally. Run the same checks locally:
 
 ```bash
 make check   # syntax check (no extra tooling needed)
@@ -111,8 +111,7 @@ docker run --rm -e TAGS="--ask-vault-pass" -it new-computer
 
 ## Known Limitations
 
-- **Non-amd64 hosts aren't fully supported yet.** `mise` and `repo_packages` hardcode `arch=amd64` in their apt source lines (unlike `docker`'s role, which derives the arch correctly), so package installs there fail on arm64 ([#16](https://github.com/Japenner/ansible/issues/16)).
-- **The `signal-desktop` repo entry has the wrong apt suite** (`stable` instead of `xenial`), so it currently fails with "does not have a Release file" ([#15](https://github.com/Japenner/ansible/issues/15)).
+- **Non-amd64 hosts aren't fully supported.** `mise`, `repo_packages`, and `docker` all derive the apt architecture dynamically via `dpkg --print-architecture`, but `deb_packages` (RustDesk, Discord, Obsidian) downloads a specific pinned `.deb` URL per app in `group_vars/all.yml`, and those URLs are amd64-only. This is an accepted tradeoff for a single amd64 desktop, not a bug.
 
 See the [open issues](https://github.com/Japenner/ansible/issues) for the full cleanup/modernization backlog.
 

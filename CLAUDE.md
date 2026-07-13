@@ -33,9 +33,11 @@ a library or a project soliciting outside contributions.
   execution) and `make test`/`make docker` (builds the `new-computer` /
   `nvim-computer` Docker images from the repo's own `Dockerfile` and can
   actually run the playbook inside a container). CI
-  (`.github/workflows/ci.yml`) currently only does the first tier — it does
-  not run the playbook. Don't assume CI passing means the playbook actually
-  works; verify with a Docker run for anything touching role logic.
+  (`.github/workflows/ci.yml`) runs both: a `lint` job for the static tier,
+  and a `provision` job that builds `new-computer` and runs the playbook
+  inside it with `--tags core,font,zsh,mise,docker,install,repo`. `ssh`,
+  `dotfiles`, and `personal_projects` still can't run in CI (need a vault
+  password / SSH deploy key) — verify those locally with a Docker run.
 
 ## Execution boundary
 
@@ -81,17 +83,18 @@ isolated container, not a real machine.
 
 ## Known gaps (see open GitHub issues for the full backlog)
 
-- `mise` and `repo_packages` hardcode `arch=amd64` in their apt source lines
-  instead of deriving it like `docker`'s role does — breaks on non-amd64
-  hosts (issue #16).
-- The `signal-desktop` `repo_packages` entry has the wrong apt suite
-  (`stable` instead of `xenial`) — issue #15.
-- The one-line `curl | bash` bootstrap (`ansible-run`) doesn't supply a vault
-  password, so it currently fails on the `ssh` role — issue #13.
+- `ssh`, `dotfiles`, and `personal_projects` tags are permanently excluded
+  from CI's `provision` job — they need a vault password and an SSH deploy
+  key that this repo doesn't hand to Actions. This is an accepted tradeoff
+  (trading that coverage for not putting secrets in a public repo's CI), not
+  a bug.
+- `deb_packages` entries (rustdesk, discord, obsidian) hardcode `arch` in
+  `group_vars/all.yml` instead of deriving it via `dpkg --print-architecture`
+  the way `repo_packages` and `docker` now do. Harmless on a single amd64
+  desktop; only matters if this ever runs on non-amd64.
 
-Don't silently "fix" these as a side effect of unrelated work — they're
-tracked issues with their own acceptance criteria. If a task requires
-touching the same lines, say so explicitly rather than bundling the fix in.
+These are accepted tradeoffs, not tracked issues — don't file work against
+them or fix them as a side effect of unrelated work without asking first.
 
 ## Output shape
 
@@ -115,11 +118,11 @@ touching the same lines, say so explicitly rather than bundling the fix in.
 - **Dual package-install mechanism — repo_packages vs deb_packages**: Two distinct data-driven mechanisms live in `group_vars/all.yml` and are handled by dedicated roles: `repo_packages` adds a signed apt repository for vendors that publish one; `deb_packages` downloads a specific `.deb` file by URL and installs it directly.
 - **FQCN module style enforced throughout**: All tasks use fully-qualified collection names — `ansible.builtin.*` for core modules and `ansible.posix.*` for the one module that needs it (`authorized_key`).
 - **Makefile as the single entry point**: A single `Makefile` is the entry point for every operation: `install`, `run`, `check`, `lint`, `docker`, `test`, and `clean`.
-- **GPG key handling via get_url + gpg --dearmor, not apt_key**: `roles/repo_packages/tasks/install.yml` downloads each vendor's key with `ansible.builtin.get_url`, dearmoring it first when the vendor publishes an ASCII-armored key.
+- **GPG key handling via get_url + gpg --dearmor, not apt_key**: still true for `roles/docker/tasks/main.yml`, which downloads Docker's key with `ansible.builtin.get_url` and dearmors it manually. `repo_packages` moved off this pattern in PR #28 — `roles/repo_packages/tasks/install.yml` now passes each vendor's `gpg_key_url` straight to `deb822_repository`'s `signed_by:`, which fetches and converts the key itself; there's no separate `get_url`/dearmor step or `armored` flag for that role anymore.
 - **Consolidated, parameterized Dockerfile for test images**: A single `Dockerfile`, parameterized by build args (`UBUNTU_VERSION` default `24.04`, `INSTALL_NVIM` default `false`), replaces three separate Dockerfiles pinned to EOL `focal`.
-- **CI runs static checks only, not a full playbook execution**: `.github/workflows/ci.yml` installs `ansible`, `ansible-lint`, and `yamllint`, then runs `yamllint .`, `ansible-lint`, and `ansible-playbook --syntax-check ubuntu.yml` — static analysis and syntax verification only.
+- **CI runs both static checks and a real playbook execution**: `.github/workflows/ci.yml` has a `lint` job (`yamllint`, `ansible-lint`, `shellcheck`, `--syntax-check`) and a `provision` job that builds the `new-computer` Docker image and runs `ansible-playbook` inside it with `--tags core,font,zsh,mise,docker,install,repo` — the subset that needs neither a vault password nor SSH access.
 - **Secrets are committed to the repo only ansible-vault encrypted**: Every secret-bearing file (`.ssh/id_ed25519*`, everything under `auth_codes/`) is committed only after being encrypted with `ansible-vault`.
-- **Two-tier testing strategy — static checks vs. execution**: Testing is split into `make check`/`make lint` (syntax + lint, no execution) and `make test`/`make docker` (builds and runs the playbook inside a container); CI currently wires up only the first tier.
+- **Two-tier testing strategy — static checks vs. execution**: Testing is split into `make check`/`make lint` (syntax + lint, no execution) and `make test`/`make docker` (builds and runs the playbook inside a container); CI wires up both tiers via its `lint` and `provision` jobs.
 
 ## Session handoff
 
